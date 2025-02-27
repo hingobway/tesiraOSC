@@ -15,6 +15,7 @@ project(${PROJECT_NAME} VERSION ${VERSION_NUMBER})
 
 # PACKAGE INCLUDE
 add_subdirectory(include/JUCE JUCE)
+include(include/oscpack.cmake)
 
 # JUCE CONFIG
 juce_add_gui_app(${TARGET_NAME}
@@ -57,7 +58,10 @@ target_link_libraries(${TARGET_NAME}
   PRIVATE
   BinaryData
 
-  # ADD JUCE MODULES HERE
+  # EXTERNAL DEPS
+  oscpack
+
+  # JUCE MODULES
   juce::juce_gui_basics
   juce::juce_gui_extra
 
