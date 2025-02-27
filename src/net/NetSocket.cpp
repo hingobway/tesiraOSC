@@ -1,4 +1,4 @@
-#include "UDPSend.h"
+#include "NetSocket.h"
 
 #include <string>
 #include <sstream>
@@ -8,7 +8,7 @@
 
 #define BUFFER_SIZE (1024)
 
-UDPSend::UDPSend() : socket()
+NetSocket::NetSocket() : socket()
 {
   // SETTINGS
   destination_ = "127.0.0.1";
@@ -88,23 +88,23 @@ UDPSend::UDPSend() : socket()
   }
 }
 
-UDPSend::~UDPSend()
+NetSocket::~NetSocket()
 {
   socket.shutdown();
 }
 
-bool UDPSend::send(const std::string &cmd)
+bool NetSocket::send(const std::string &cmd)
 {
   std::string msg{cmd + "\n"};
   return this->sendBytes(msg.c_str(), (int)msg.size());
 }
 
-bool UDPSend::send(const std::vector<unsigned char> &arr)
+bool NetSocket::send(const std::vector<unsigned char> &arr)
 {
   return this->sendBytes(arr.data(), (int)arr.size());
 }
 
-bool UDPSend::sendBytes(const void *bytes, const int size)
+bool NetSocket::sendBytes(const void *bytes, const int size)
 {
   int written = socket.write(
       destination_, port_,

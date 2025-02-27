@@ -37,6 +37,8 @@ ADD_LIBRARY(oscpack
   ${BASE}/osc/OscOutboundPacketStream.cpp
 )
 
+target_compile_options(oscpack PRIVATE "-w")
+
 target_include_directories(oscpack PRIVATE ${BASE})
 
 target_include_directories(oscpack INTERFACE ${BASE})

@@ -5,7 +5,7 @@
 #include "gui/Tray.h"
 #include "gui/GlobalLAF.h"
 
-#include "net/UDPSend.h"
+#include "net/NetSocket.h"
 
 class MainComponent final : public juce::Component
 {
@@ -24,7 +24,7 @@ private:
   GLobalLAF globalLAF;
   Tray trayIcon;
 
-  UDPSend udpSend;
+  NetSocket udpSend;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

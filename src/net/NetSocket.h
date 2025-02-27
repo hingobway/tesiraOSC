@@ -5,11 +5,11 @@
 #include <string>
 #include <vector>
 
-class UDPSend
+class NetSocket
 {
 public:
-  UDPSend();
-  ~UDPSend();
+  NetSocket();
+  ~NetSocket();
 
   bool send(const std::string &);
   bool send(const std::vector<unsigned char> &);
