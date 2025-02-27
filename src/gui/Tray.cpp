@@ -2,16 +2,16 @@
 
 #include <BinaryData.h>
 
-Tray::Tray(juce::DocumentWindow &win_, std::function<void()> quit) : win(win_)
+Tray::Tray(std::function<void()> quit)
 {
   auto img = juce::ImageFileFormat::loadFrom(BinaryData::tray_png, BinaryData::tray_pngSize);
   this->setIconImage(img, img);
 
   menu.addItem(
-      "Show Window", [this]()
+      "Show Window", []()
       {
-        win.setVisible(true);
-        juce::Process::setDockIconVisible(true); });
+        juce::Process::setDockIconVisible(true);
+        juce::Process::makeForegroundProcess(); });
   menu.addSeparator();
   menu.addItem("Quit", quit);
 }

@@ -58,7 +58,7 @@ public:
         : DocumentWindow(name, tw::ZINC_900, allButtons),
 
           //  init system tray menu with quit button
-          tray(*this, []()
+          tray([]()
                { getInstance()->systemRequestedQuit(); })
     {
       setUsingNativeTitleBar(true);
@@ -72,7 +72,8 @@ public:
 
     void closeButtonPressed() override
     {
-      setVisible(false);
+      // setVisible(false);
+      juce::Process::hide();
       juce::Process::setDockIconVisible(false);
     }
 

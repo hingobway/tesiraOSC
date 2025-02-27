@@ -13,6 +13,10 @@ set(VERSION_NUMBER 0.1.0)
 # PROJECT INIT
 project(${PROJECT_NAME} VERSION ${VERSION_NUMBER})
 
+if(APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
+endif()
+
 # PACKAGE INCLUDE
 add_subdirectory(include/JUCE JUCE)
 include(include/oscpack.cmake)

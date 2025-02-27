@@ -8,13 +8,11 @@
 class Tray : juce::SystemTrayIconComponent
 {
 public:
-  Tray(juce::DocumentWindow &window, std::function<void()> onQuit);
+  Tray(std::function<void()> quit);
 
   void mouseDown(const juce::MouseEvent &) override;
 
 private:
-  juce::DocumentWindow &win;
-
   MenuBar menubar;
 
   juce::PopupMenu menu;
