@@ -1,22 +1,22 @@
 #include "Tray.h"
 
-#include <juce_graphics/juce_graphics.h>
-
 #include <BinaryData.h>
 
-Tray::Tray()
+Tray::Tray(juce::DocumentWindow &win_, std::function<void()> quit) : win(win_)
 {
   auto img = juce::ImageFileFormat::loadFrom(BinaryData::tray_png, BinaryData::tray_pngSize);
-
   this->setIconImage(img, img);
+
+  menu.addItem(
+      "Show Window", [this]()
+      {
+        win.setVisible(true);
+        juce::Process::setDockIconVisible(true); });
+  menu.addSeparator();
+  menu.addItem("Quit", quit);
 }
 
 void Tray::mouseDown(const juce::MouseEvent &)
 {
-
-  juce::PopupMenu menu;
-  menu.addItem("Item One", []()
-               { DBG("ITEM 1"); });
-
   this->showDropdownMenu(menu);
 }

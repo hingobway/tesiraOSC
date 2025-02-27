@@ -1,11 +1,16 @@
 #include "MainComponent.h"
 
+#include "gui/Tray.h"
+#include "util/colors.h"
+
 //==============================================================================
 class TTApplication final : public juce::JUCEApplication
 {
 public:
   //==============================================================================
-  TTApplication() {}
+  TTApplication()
+  {
+  }
 
   const juce::String getApplicationName() override { return JUCE_APPLICATION_NAME_STRING; }
   const juce::String getApplicationVersion() override { return JUCE_APPLICATION_VERSION_STRING; }
@@ -50,9 +55,11 @@ public:
   {
   public:
     explicit MainWindow(juce::String name)
-        : DocumentWindow(name,
-                         juce::Desktop::getInstance().getDefaultLookAndFeel().findColour(backgroundColourId),
-                         allButtons)
+        : DocumentWindow(name, tw::ZINC_900, allButtons),
+
+          //  init system tray menu with quit button
+          tray(*this, []()
+               { getInstance()->systemRequestedQuit(); })
     {
       setUsingNativeTitleBar(true);
       setContentOwned(new MainComponent(), true);
@@ -65,7 +72,8 @@ public:
 
     void closeButtonPressed() override
     {
-      getInstance()->systemRequestedQuit();
+      setVisible(false);
+      juce::Process::setDockIconVisible(false);
     }
 
     /* Note: Be careful if you override any DocumentWindow methods - the base
@@ -76,6 +84,8 @@ public:
     */
 
   private:
+    Tray tray;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainWindow)
   };
 
