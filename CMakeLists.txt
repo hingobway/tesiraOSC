@@ -4,8 +4,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # ----------------------------------------
 # VARIABLES
-set(PROJECT_NAME "TESIRA_TELNET")
-set(TARGET_NAME "ttel")
+set(PROJECT_NAME "TESIRATEL")
+set(TARGET_NAME "tesiratel")
 set(VERSION_NUMBER 0.1.0)
 
 # ----------------------------------------
@@ -19,7 +19,7 @@ include(include/oscpack.cmake)
 
 # JUCE CONFIG
 juce_add_gui_app(${TARGET_NAME}
-  PRODUCT_NAME "TESIRA TELNET"
+  PRODUCT_NAME "TESIRATEL"
 
   # manufacturer
   COMPANY_NAME "foster"

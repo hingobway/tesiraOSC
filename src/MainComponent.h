@@ -5,6 +5,8 @@
 #include "gui/Tray.h"
 #include "gui/GlobalLAF.h"
 
+#include "net/UDPSend.h"
+
 class MainComponent final : public juce::Component
 {
 public:
@@ -21,6 +23,8 @@ private:
 
   GLobalLAF globalLAF;
   Tray trayIcon;
+
+  UDPSend udpSend;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };
