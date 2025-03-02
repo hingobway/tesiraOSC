@@ -8,6 +8,8 @@ const tesira = new TesiraNet({
   localAddress: '169.254.3.240',
 });
 
+tesira.on('connected', () => console.log('connected to tesira'));
+
 Deno.serve(
   {
     port: 53533,

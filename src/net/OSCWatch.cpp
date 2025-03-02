@@ -68,9 +68,16 @@ void OSCWatch::run()
         std::stringstream s{};
         for (auto it = argb; it != arge; ++it)
         {
-          if (!it->IsString())
-            continue;
-          s << it->AsString() << " ";
+          if (it->IsString())
+            s << it->AsString() << " ";
+          else if (it->IsInt32())
+            s << it->AsInt32() << " ";
+          else if (it->IsInt64())
+            s << it->AsInt64() << " ";
+          else if (it->IsFloat())
+            s << it->AsFloat() << " ";
+          else if (it->IsDouble())
+            s << it->AsDouble() << " ";
         }
         auto output = s.str().substr(0, s.str().size() - 1);
 

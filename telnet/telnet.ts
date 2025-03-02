@@ -39,38 +39,38 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
   }
 
   async connect() {
-    while (!this.connected) {
-      try {
-        console.log('telnet connecting...');
-        await telnet.connect(this.options);
+    // while (!this.connected) {
+    try {
+      console.log('telnet connecting...');
+      await telnet.connect(this.options);
 
-        let buffer = '';
+      let buffer = '';
 
-        telnet.on('data', (data: Buffer) => {
-          const message = data.toString();
+      telnet.on('data', (data: Buffer) => {
+        const message = data.toString();
 
-          if (!buffer.length) {
-            if (!message.includes(ENDLINE)) return;
-            this.connected = true;
-            this.emit('connected');
-            return;
-          }
+        if (!this.connected) {
+          if (!message.includes(ENDLINE)) return;
+          this.connected = true;
+          this.emit('connected');
+          return;
+        }
 
-          buffer += message;
-          if (buffer.endsWith(ENDLINE)) {
-            // HANDLE MESSAGE
+        buffer += message;
+        if (buffer.endsWith(ENDLINE)) {
+          // HANDLE MESSAGE
 
-            console.log('MESSAGE RECEIVED:', buffer);
+          console.log('MESSAGE RECEIVED:', buffer);
 
-            this.emit('message', buffer);
+          this.emit('message', buffer);
 
-            buffer = '';
-          }
-        });
-      } catch (error) {
-        console.log('FAILED', error);
-      }
+          buffer = '';
+        }
+      });
+    } catch (error) {
+      console.log('FAILED', error);
     }
+    // }
   }
 
   waitForResponse(response: string) {

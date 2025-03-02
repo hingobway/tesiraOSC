@@ -15,7 +15,7 @@ IPC::IPC() : socket(juce::URL("ws://127.0.0.1:53533"))
 
   socket.onDisconnect = [this]()
   {
-    DBG("DISCONNECTED");
+    DBG("DISCONNECTED"); // TODO why does this run twice on startup
   };
 
   while (!socket.isConnected())
