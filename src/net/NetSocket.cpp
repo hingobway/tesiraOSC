@@ -2,19 +2,86 @@
 
 #include <string>
 #include <sstream>
+#include <cstdlib>
 
 #include <osc/OscOutboundPacketStream.h>
 #include <osc/OscReceivedElements.h>
 
 #define BUFFER_SIZE (1024)
 
-NetSocket::NetSocket()
+NetSocket::NetSocket() : udp(), tcp()
 {
   // SETTINGS
-  destination_ = "127.0.0.1";
-  port_ = 53000;
+  destination_ = "169.254.3.243";
+  port_ = 23;
 
   // TODO there should definitely be timeouts everywhere
+
+  // READ
+
+  udp.bindToPort(53534);
+
+  char readbuf[BUFFER_SIZE];
+
+  while (true)
+  {
+    int ready = udp.waitUntilReady(true, -1);
+    if (ready != 1)
+      jassertfalse;
+
+    int numread = udp.read(readbuf, BUFFER_SIZE, false);
+
+    std::string txt{readbuf};
+    if (!txt.length())
+      continue;
+
+    // PROCESS
+
+    try
+    {
+      osc::ReceivedMessage msg(osc::ReceivedPacket(readbuf, numread));
+      try
+      {
+
+        DBG("COMMAND RECEIVED");
+
+        auto command = std::string(msg.AddressPattern());
+
+        // CHECK COMMAND
+        if (command != "/run")
+          continue;
+
+        DBG("COMMAND IS RUN");
+
+        auto argb = msg.ArgumentsBegin();
+        auto arge = msg.ArgumentsEnd();
+
+        std::stringstream s{};
+        for (auto it = argb; it != arge; ++it)
+        {
+          if (it->IsString())
+            s << it->AsString() << " ";
+          else
+            DBG("Non-string argument encountered");
+        }
+        std::string output = "./tel " + s.str().substr(0, s.str().size() - 1);
+
+        DBG("RUNNING " << output);
+
+        system(output.c_str());
+
+        // system("touch ABCDEFGH.txt");
+      }
+      catch (const osc::Exception &e)
+      {
+        DBG("OSC PARSE ERROR: " << msg.AddressPattern() << ": " << e.what());
+      }
+    }
+    catch (const osc::Exception &e)
+    {
+      DBG("OSC ERROR: " << e.what());
+    }
+  }
 }
 
 NetSocket::~NetSocket()
@@ -36,7 +103,10 @@ bool NetSocket::connect(SocketType type)
   if (type == SocketType::TCP)
   {
     // prepare TCP
-    bool success = tcp.connect(destination_, port_, 0);
+    juce::String dst{destination_};
+    tcp.bindToPort(53534, "169.254.3.240");
+    tcp.waitUntilReady(true, -1);
+    bool success = this->tcp.connect(dst, port_, 10000);
 
     if (!success)
       return false;
@@ -79,80 +149,81 @@ juce::String NetSocket::getSelectedCueNumber(SocketType type)
   if (!success)
     jassertfalse;
 
-  // send OSC packet
-  char buf[BUFFER_SIZE];
-  osc::OutboundPacketStream p(buf, BUFFER_SIZE);
-  p << osc::BeginBundleImmediate;
+  return "";
 
-  if (type == SocketType::UDP)
-    p << osc::BeginMessage("/udpReplyPort")
-      << udp.getBoundPort()
-      << osc::EndMessage;
+  // // send OSC packet
+  // char buf[BUFFER_SIZE];
+  // osc::OutboundPacketStream p(buf, BUFFER_SIZE);
+  // p << osc::BeginBundleImmediate;
 
-  p << osc::BeginMessage("/cue/selected/number")
-    << osc::EndMessage;
+  // if (type == SocketType::UDP)
+  //   p << osc::BeginMessage("/udpReplyPort")
+  //     << udp.getBoundPort()
+  //     << osc::EndMessage;
 
-  p << osc::EndBundle;
+  // p << osc::BeginMessage("/cue/selected/number")
+  //   << osc::EndMessage;
 
-  this->sendBytes(type, p.Data(), (int)p.Size());
+  // p << osc::EndBundle;
 
-  // READ
+  // this->sendBytes(type, p.Data(), (int)p.Size());
 
-  char readbuf[BUFFER_SIZE];
+  // // READ
 
-  while (true)
+  // char readbuf[BUFFER_SIZE];
 
-  {
-    int ready = (type == SocketType::UDP) ? udp.waitUntilReady(true, -1)
-                                          : tcp.waitUntilReady(true, -1);
-    if (ready != 1)
-      jassertfalse;
+  // while (true)
+  // {
+  //   int ready = (type == SocketType::UDP) ? udp.waitUntilReady(true, -1)
+  //                                         : tcp.waitUntilReady(true, -1);
+  //   if (ready != 1)
+  //     jassertfalse;
 
-    int numread = (type == SocketType::UDP) ? udp.read(readbuf, BUFFER_SIZE, false)
-                                            : tcp.read(readbuf, BUFFER_SIZE, false);
+  //   int numread = (type == SocketType::UDP) ? udp.read(readbuf, BUFFER_SIZE, false)
+  //                                           : tcp.read(readbuf, BUFFER_SIZE, false);
 
-    std::string txt{readbuf};
-    if (!txt.length())
-    {
-      continue;
-    }
+  //   std::string txt{readbuf};
+  //   if (!txt.length())
+  //   {
+  //     continue;
+  //   }
 
-    // PROCESS
+  //   // PROCESS
 
-    try
-    {
-      osc::ReceivedMessage msg(osc::ReceivedPacket(readbuf, numread));
-      try
-      {
+  //   try
+  //   {
+  //     osc::ReceivedMessage msg(osc::ReceivedPacket(readbuf, numread));
+  //     try
+  //     {
 
-        auto command = std::string(msg.AddressPattern());
+  //       auto command = std::string(msg.AddressPattern());
 
-        // CHECK COMMAND
-        if (command != "/reply/cue/selected/number")
-          continue;
+  //       // CHECK COMMAND
+  //       if (command != "/reply/cue/selected/number")
+  //         continue;
 
-        // GET JSON STRING
-        auto arg = msg.ArgumentsBegin();
-        if (!arg->IsString())
-          return "";
+  //       // GET JSON STRING
+  //       auto arg = msg.ArgumentsBegin();
+  //       if (!arg->IsString())
+  //         return "";
 
-        // GET PARAMATER
-        auto data = juce::JSON::parse(arg->AsString())
-                        .getProperty("data", juce::var());
-        if (!data.isString())
-          return "";
+  //       // GET PARAMATER
+  //       auto data = juce::JSON::parse(arg->AsString())
+  //                       .getProperty("data", juce::var());
+  //       if (!data.isString())
+  //         return "";
 
-        // return cue number
-        return data.toString();
-      }
-      catch (const osc::Exception &e)
-      {
-        DBG("OSC PARSE ERROR: " << msg.AddressPattern() << ": " << e.what());
-      }
-    }
-    catch (const osc::Exception &e)
-    {
-      DBG("OSC ERROR: " << e.what());
-    }
-  }
+  //       // return cue number
+  //       return data.toString();
+  //     }
+  //     catch (const osc::Exception &e)
+  //     {
+  //       DBG("OSC PARSE ERROR: " << msg.AddressPattern() << ": " << e.what());
+  //     }
+  //   }
+  //   catch (const osc::Exception &e)
+  //   {
+  //     DBG("OSC ERROR: " << e.what());
+  //   }
+  // }
 }

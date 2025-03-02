@@ -15,8 +15,10 @@ MainComponent::MainComponent()
 
   b1.onClick = [this]()
   {
-    auto num = socket.getSelectedCueNumber(NetSocket::UDP);
-    l1.setText("output: " + num, juce::dontSendNotification);
+    // auto num = socket.getSelectedCueNumber(NetSocket::TCP);
+    // l1.setText("output: " + num, juce::dontSendNotification);
+
+    ipc.sendMessage("c message!");
   };
 
   addAndMakeVisible(b1);

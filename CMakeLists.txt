@@ -18,8 +18,10 @@ if(APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 # PACKAGE INCLUDE
+find_package(Boost CONFIG REQUIRED)
 add_subdirectory(include/JUCE JUCE)
 include(include/oscpack.cmake)
+include(include/websocketpp.cmake)
 
 # JUCE CONFIG
 juce_add_gui_app(${TARGET_NAME}
@@ -29,6 +31,8 @@ juce_add_gui_app(${TARGET_NAME}
   COMPANY_NAME "foster"
   BUNDLE_ID "audio.foster.tesiratel"
 )
+juce_add_module(include/gin/modules/gin)
+juce_add_module(include/gin/modules/gin_network)
 
 target_compile_definitions(${TARGET_NAME}
   PUBLIC
@@ -44,6 +48,7 @@ target_compile_definitions(${TARGET_NAME}
   JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:${TARGET_NAME},JUCE_PRODUCT_NAME>"
   JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:${TARGET_NAME},JUCE_VERSION>"
 )
+target_include_directories(${TARGET_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
 
 # ADD FILES
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
@@ -63,7 +68,10 @@ target_link_libraries(${TARGET_NAME}
   BinaryData
 
   # EXTERNAL DEPS
+  gin
+  gin_network
   oscpack
+  websocketpp
 
   # JUCE MODULES
   juce::juce_gui_basics

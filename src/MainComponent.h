@@ -4,6 +4,7 @@
 
 #include "gui/GlobalLAF.h"
 #include "net/NetSocket.h"
+#include "net/IPC.h"
 
 class MainComponent final : public juce::Component
 {
@@ -20,7 +21,8 @@ private:
   //==============================================================================
 
   // BACKEND
-  NetSocket socket;
+  // NetSocket socket;
+  IPC ipc;
 
   // FRONTEND
   GLobalLAF globalLAF;

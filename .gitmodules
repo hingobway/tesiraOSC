@@ -4,3 +4,9 @@
 [submodule "include/oscpack"]
 	path = include/oscpack
 	url = https://github.com/mkalten/oscpack.git
+[submodule "include/websocketpp"]
+	path = include/websocketpp
+	url = https://github.com/zaphoyd/websocketpp.git
+[submodule "include/gin"]
+	path = include/gin
+	url = https://github.com/FigBug/Gin.git
