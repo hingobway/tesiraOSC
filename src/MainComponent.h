@@ -3,8 +3,8 @@
 #include <juce_gui_extra/juce_gui_extra.h>
 
 #include "gui/GlobalLAF.h"
-#include "net/NetSocket.h"
 #include "net/IPC.h"
+#include "net/OSCWatch.h"
 
 class MainComponent final : public juce::Component
 {
@@ -23,6 +23,7 @@ private:
   // BACKEND
   // NetSocket socket;
   IPC ipc;
+  OSCWatch osc;
 
   // FRONTEND
   GLobalLAF globalLAF;

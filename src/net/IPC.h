@@ -1,14 +1,9 @@
 #pragma once
 
 #include <juce_core/juce_core.h>
+#include <gin_network/gin_network.h>
 
-#define IPC_THREAD_KILL_TIMEOUT_MS (2000)
-#define IPC_READ_WAIT_MS (1800)
-#define IPC_BUFFER_SIZE (1024)
-
-#define IPC_PORT (53533)
-
-class IPC : private juce::Thread
+class IPC
 {
 public:
   IPC();
@@ -17,8 +12,5 @@ public:
   void sendMessage(const std::string &msg);
 
 private:
-  void run();
-
-  juce::StreamingSocket server;
-  juce::OwnedArray<juce::StreamingSocket> connections;
+  gin::AsyncWebsocket socket;
 };

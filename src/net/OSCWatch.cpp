@@ -74,11 +74,14 @@ void OSCWatch::run()
         }
         std::string output = "./tel " + s.str().substr(0, s.str().size() - 1);
 
-        DBG("RUNNING " << output);
+        {
+          juce::MessageManagerLock mml;
+          if (!mml.lockWasGained())
+            return;
 
-        system(output.c_str());
-
-        // system("touch ABCDEFGH.txt");
+          DBG("running OSC callback");
+          this->onMessage(output);
+        }
       }
       catch (const osc::Exception &e)
       {
