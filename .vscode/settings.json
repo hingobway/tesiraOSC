@@ -1,8 +1,4 @@
 {
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-  "deno.enable": true,
-  "files.associations": {
-    "*.css": "postcss",
-    "string": "cpp"
-  }
+  "deno.enable": true
 }

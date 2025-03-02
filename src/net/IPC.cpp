@@ -20,11 +20,13 @@ IPC::IPC() : socket(juce::URL("ws://127.0.0.1:53533"))
 
   while (!socket.isConnected())
   {
-    DBG("attempting WS connection...");
+    DBG("attempting IPC connection...");
     socket.connect();
 
     juce::Time::waitForMillisecondCounter(juce::Time::getMillisecondCounter() + 500);
   }
+
+  DBG("IPC connected!");
 }
 
 IPC::~IPC()

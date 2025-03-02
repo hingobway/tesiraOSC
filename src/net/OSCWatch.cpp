@@ -72,7 +72,7 @@ void OSCWatch::run()
             continue;
           s << it->AsString() << " ";
         }
-        std::string output = "./tel " + s.str().substr(0, s.str().size() - 1);
+        auto output = s.str().substr(0, s.str().size() - 1);
 
         {
           juce::MessageManagerLock mml;
