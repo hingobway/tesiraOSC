@@ -3,17 +3,17 @@
 IPC::IPC() : socket(juce::URL("ws://127.0.0.1:53533"))
 {
 
-  socket.onConnect = [this]()
+  socket.onConnect = []()
   {
     DBG("connected!");
   };
 
-  socket.onText = [this](const juce::String &msg)
+  socket.onText = [](const juce::String &msg)
   {
     DBG("WS: " << msg);
   };
 
-  socket.onDisconnect = [this]()
+  socket.onDisconnect = []()
   {
     DBG("DISCONNECTED"); // TODO why does this run twice on startup
   };
