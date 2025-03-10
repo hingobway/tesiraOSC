@@ -9,9 +9,7 @@ Tray::Tray(std::function<void()> quit)
 
   menu.addItem(
       "Show Window", []()
-      {
-        juce::Process::setDockIconVisible(true);
-        juce::Process::makeForegroundProcess(); });
+      { juce::Process::makeForegroundProcess(); });
   menu.addSeparator();
   menu.addItem("Quit", quit);
 }

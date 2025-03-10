@@ -1,9 +1,14 @@
 import { TesiraNet } from './telnet.ts';
 
+// GET ARGS
+const PORT_IPC = parseInt(Deno.args[0]);
+if (!Number.isFinite(PORT_IPC)) console.error('MISSING IPC PORT');
+
+// TODO wait for IPC command to start this
 const tesira = new TesiraNet({
+  host: '127.0.0.1',
   // host: '169.254.3.243',
   // localAddress: '169.254.3.240',
-  host: '127.0.0.1',
   port: 23,
   negotiationMandatory: false,
   timeout: 5000,
@@ -13,8 +18,7 @@ tesira.on('connected', () => console.log('connected to tesira'));
 
 Deno.serve(
   {
-    port: 53533,
-    hostname: '127.0.0.1',
+    port: PORT_IPC,
   },
   (req) => {
     if (req.headers.get('upgrade') != 'websocket')

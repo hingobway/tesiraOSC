@@ -2,26 +2,37 @@
 
 NetProcess::NetProcess() : juce::Thread("NetProcess")
 {
-
-  process.start(getAppPath());
-
-  startThread();
+  runProcess();
 }
 
 NetProcess::~NetProcess()
 {
-  stopThread(1000);
-  process.kill();
+  stopThread(100);
+  process->kill();
 }
 
 void NetProcess::run()
 {
   static std::string buffer{};
-
   char dbuf[BUFFER_SIZE]{};
+
+  // event loop
   while (!threadShouldExit())
   {
-    process.readProcessOutput(dbuf, BUFFER_SIZE);
+    // if process stopped running, restart it.
+    if (!process->isRunning())
+    {
+      juce::MessageManager::callAsync([this]() { //
+        restartProcess();
+      });
+      return;
+    }
+
+    // show console outputs if debuggin
+
+#ifdef JUCE_DEBUG
+
+    process->readProcessOutput(dbuf, BUFFER_SIZE);
 
     if (!strlen(dbuf))
       continue;
@@ -46,13 +57,31 @@ void NetProcess::run()
 
     std::memset(dbuf, 0, BUFFER_SIZE);
 
+#endif
+
     juce::Time::waitForMillisecondCounter(juce::Time::getMillisecondCounter() + 50);
   }
 }
 
-juce::String NetProcess::getAppPath()
+void NetProcess::runProcess()
 {
-  return juce::File::getSpecialLocation(juce::File::currentExecutableFile)
-      .getSiblingFile(NODE_APP)
-      .getFullPathName();
+  // init
+  process.reset(new juce::ChildProcess());
+  auto appPath =
+      juce::File::getSpecialLocation(juce::File::currentExecutableFile)
+          .getSiblingFile(NODE_APP)
+          .getFullPathName();
+
+  // start node process
+  process->start(appPath + " " + std::to_string(PORT_IPC));
+
+  // listen for output
+  startThread();
+}
+
+void NetProcess::restartProcess() // MAIN THREAD ONLY
+{
+  DBG("[NET] RESTARTING NODE PROCESS");
+  stopThread(100);
+  runProcess();
 }

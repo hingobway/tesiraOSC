@@ -85,7 +85,8 @@ void OSCWatch::run()
         auto output = s.str().substr(0, s.str().size() - 1);
 
         {
-          this->onMessage(output);
+          if (onRunCommand)
+            onRunCommand(output);
         }
       }
       catch (const osc::Exception &e)

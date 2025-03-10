@@ -18,8 +18,7 @@ public:
 
   juce::Typeface::Ptr getTypefaceForFont(const juce::Font &)
   {
-    juce::ignoreUnused(font::Atkinson700);
-    return font::Atkinson400();
+    return fonts::Atkinson400Typeface();
   }
 
 private:

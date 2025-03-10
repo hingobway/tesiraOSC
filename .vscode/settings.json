@@ -75,6 +75,9 @@
     "vector": "cpp",
     "algorithm": "cpp",
     "*.mm": "cpp",
-    "*.ipp": "cpp"
+    "*.ipp": "cpp",
+    "cfenv": "cpp",
+    "span": "cpp",
+    "valarray": "cpp"
   }
 }

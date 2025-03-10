@@ -7,3 +7,7 @@
 [submodule "include/websocketpp"]
 	path = include/websocketpp
 	url = https://github.com/zaphoyd/websocketpp.git
+[submodule "include/melatonin_inspector"]
+	path = include/melatonin_inspector
+	url = https://github.com/sudara/melatonin_inspector.git
+	branch = main

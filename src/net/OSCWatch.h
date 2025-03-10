@@ -6,8 +6,8 @@
 
 #include "../OPTIONS.h"
 
-#define THREAD_KILL_TIMEOUT_MS (2000)
-#define READ_WAIT_MS (1800)
+#define THREAD_KILL_TIMEOUT_MS (220)
+#define READ_WAIT_MS (200)
 #define BUFFER_SIZE (1024)
 
 class OSCWatch : private juce::Thread
@@ -16,7 +16,7 @@ public:
   OSCWatch();
   ~OSCWatch();
 
-  std::function<void(std::string)> onMessage;
+  std::function<void(std::string)> onRunCommand;
 
 private:
   void run() override;

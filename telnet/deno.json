@@ -1,8 +1,4 @@
 {
-  "tasks": {
-    "dev": "deno run -A main.ts",
-    "build": "deno compile -A -o tel main.ts"
-  },
   "imports": {
     "@std/assert": "jsr:@std/assert@1"
   },

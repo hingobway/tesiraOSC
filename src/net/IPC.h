@@ -5,6 +5,7 @@
 #include <websocketpp/client.hpp>
 #include <websocketpp/config/asio_no_tls_client.hpp>
 
+#include "../util/json.h"
 #include "../OPTIONS.h"
 
 namespace WS
@@ -17,26 +18,27 @@ namespace WS
   using err = websocketpp::lib::error_code;
 }
 
-namespace ARG
-{
-  using namespace std::placeholders;
-}
-
 class IPC : private juce::Thread
 {
 public:
   IPC();
   ~IPC();
 
-  void sendMessage(const std::string &msg);
+  void sendMessage(std::string type, juce::var data);
+  void sendMessageString(const std::string &msg);
+
+  // EVENT CALLBACKS
+  std::function<void(std::string)> onMessage;
+  std::function<void()> onConnect;
+  std::function<void()> onDisconnect;
 
 private:
   void initWS();
   void run() override;
 
-  void onMessage(WS::hdl hdl, WS::msg msg);
-  void onConnect(WS::hdl hdl);
-  void onFail(WS::hdl hdl);
+  void handleMessage(WS::hdl hdl, WS::msg msg);
+  void handleConnect(WS::hdl hdl);
+  void handleFailOrClose(WS::hdl hdl);
 
   void restartThread();
 
@@ -45,3 +47,8 @@ private:
 
   int port = PORT_IPC;
 };
+
+namespace ARG
+{
+  using namespace std::placeholders;
+}

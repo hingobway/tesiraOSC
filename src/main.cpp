@@ -72,9 +72,7 @@ public:
 
     void closeButtonPressed() override
     {
-      // setVisible(false);
       juce::Process::hide();
-      juce::Process::setDockIconVisible(false);
     }
 
     /* Note: Be careful if you override any DocumentWindow methods - the base

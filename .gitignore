@@ -1,4 +1,4 @@
 build/
+bin/
 .env
-tel
 .DS_Store

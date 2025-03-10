@@ -19,6 +19,7 @@ endif()
 
 # PACKAGE INCLUDE
 add_subdirectory(include/JUCE JUCE)
+add_subdirectory(include/melatonin_inspector)
 
 find_package(Boost CONFIG REQUIRED)
 include(include/oscpack.cmake)
@@ -34,13 +35,15 @@ juce_add_gui_app(${TARGET_NAME}
 )
 
 # NODE DIR SETUP
-set(NODE_FILE_DIR telnet)
-set(NODE_FILENAME tel)
+set(NODE_FILE_DIR "telnet")
+set(NODE_FILENAME "node_telnet")
+set(NODE_BINDIR "bin")
+set(NODE_ENTRYPOINT "main.ts")
 
 if(WIN32)
-  set(NODE_FULL_FILENAME ${NODE_FILENAME}.exe)
+  set(NODE_FULL_FILENAME "${NODE_FILENAME}.exe")
 else()
-  set(NODE_FULL_FILENAME ${NODE_FILENAME})
+  set(NODE_FULL_FILENAME "${NODE_FILENAME}")
 endif()
 
 # FINISH TARGET CONFIG
@@ -89,6 +92,8 @@ target_link_libraries(${TARGET_NAME}
   juce::juce_gui_basics
   juce::juce_gui_extra
 
+  melatonin_inspector
+
   PUBLIC
   juce::juce_recommended_config_flags
   juce::juce_recommended_lto_flags
@@ -98,12 +103,13 @@ target_link_libraries(${TARGET_NAME}
 # ----------------------------------------
 
 # NODE BUILD AND INSTALL
-set(NODE_FULL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${NODE_FILE_DIR})
-set(NODE_PATH_SRC "${NODE_FULL_DIR}/${NODE_FULL_FILENAME}")
+set(NODE_FULL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${NODE_FILE_DIR}")
+set(NODE_FULL_BINDIR "${NODE_FULL_DIR}/${NODE_BINDIR}")
+set(NODE_PATH_SRC "${NODE_FULL_BINDIR}/${NODE_FULL_FILENAME}")
 set(NODE_PATH_DST "$<TARGET_FILE_DIR:${TARGET_NAME}>/${NODE_FULL_FILENAME}")
 
 add_custom_command(TARGET ${TARGET_NAME} PRE_BUILD
-  COMMAND deno run build
+  COMMAND deno compile "-A" "-o" ${NODE_PATH_SRC} ${NODE_ENTRYPOINT}
   WORKING_DIRECTORY ${NODE_FULL_DIR}
 )
 add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
