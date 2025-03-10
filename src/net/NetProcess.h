@@ -1,6 +1,6 @@
 #pragma once
 
-#include <juce_core/juce_core.h>
+#include <juce_events/juce_events.h>
 
 #define BUFFER_SIZE (1024)
 
@@ -13,6 +13,8 @@ public:
   void run();
 
 private:
+  static juce::String getAppPath();
+
   juce::ChildProcess process;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NetProcess)

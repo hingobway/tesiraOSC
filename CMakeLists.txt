@@ -20,7 +20,7 @@ endif()
 # PACKAGE INCLUDE
 add_subdirectory(include/JUCE JUCE)
 
-# find_package(Boost CONFIG REQUIRED)
+find_package(Boost CONFIG REQUIRED)
 include(include/oscpack.cmake)
 include(include/websocketpp.cmake)
 
@@ -32,9 +32,18 @@ juce_add_gui_app(${TARGET_NAME}
   COMPANY_NAME "foster"
   BUNDLE_ID "audio.foster.tesiratel"
 )
-juce_add_module(include/gin/modules/gin)
-juce_add_module(include/gin/modules/gin_network)
 
+# NODE DIR SETUP
+set(NODE_FILE_DIR telnet)
+set(NODE_FILENAME tel)
+
+if(WIN32)
+  set(NODE_FULL_FILENAME ${NODE_FILENAME}.exe)
+else()
+  set(NODE_FULL_FILENAME ${NODE_FILENAME})
+endif()
+
+# FINISH TARGET CONFIG
 target_compile_definitions(${TARGET_NAME}
   PUBLIC
   JUCE_WEB_BROWSER=0
@@ -48,9 +57,12 @@ target_compile_definitions(${TARGET_NAME}
 
   JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:${TARGET_NAME},JUCE_PRODUCT_NAME>"
   JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:${TARGET_NAME},JUCE_VERSION>"
+
+  PRIVATE
+  NODE_APP="${NODE_FULL_FILENAME}"
 )
 
-# target_include_directories(${TARGET_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(${TARGET_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
 
 # ADD FILES
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
@@ -70,8 +82,6 @@ target_link_libraries(${TARGET_NAME}
   BinaryData
 
   # EXTERNAL DEPS
-  gin
-  gin_network
   oscpack
   websocketpp
 
@@ -83,4 +93,20 @@ target_link_libraries(${TARGET_NAME}
   juce::juce_recommended_config_flags
   juce::juce_recommended_lto_flags
   juce::juce_recommended_warning_flags
+)
+
+# ----------------------------------------
+
+# NODE BUILD AND INSTALL
+set(NODE_FULL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${NODE_FILE_DIR})
+set(NODE_PATH_SRC "${NODE_FULL_DIR}/${NODE_FULL_FILENAME}")
+set(NODE_PATH_DST "$<TARGET_FILE_DIR:${TARGET_NAME}>/${NODE_FULL_FILENAME}")
+
+add_custom_command(TARGET ${TARGET_NAME} PRE_BUILD
+  COMMAND deno run build
+  WORKING_DIRECTORY ${NODE_FULL_DIR}
+)
+add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${NODE_PATH_SRC} ${NODE_PATH_DST}
 )

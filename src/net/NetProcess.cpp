@@ -3,7 +3,7 @@
 NetProcess::NetProcess() : juce::Thread("NetProcess")
 {
 
-  process.start("");
+  process.start(getAppPath());
 
   startThread();
 }
@@ -28,17 +28,31 @@ void NetProcess::run()
 
     buffer += std::string(dbuf);
 
-    // print complete lines
-    size_t pos = 0;
-    while ((pos = buffer.find('\n')) != std::string::npos)
+    // print buffered lines
     {
-      std::string line = buffer.substr(0, pos);
-      DBG("[NET] " << line);
-      buffer.erase(0, pos + 1);
+      juce::MessageManagerLock mml;
+      if (!mml.lockWasGained())
+        return;
+
+      // print complete lines
+      size_t pos = 0;
+      while ((pos = buffer.find('\n')) != std::string::npos)
+      {
+        std::string line = buffer.substr(0, pos);
+        DBG("[NET] " << line);
+        buffer.erase(0, pos + 1);
+      }
     }
 
     std::memset(dbuf, 0, BUFFER_SIZE);
 
     juce::Time::waitForMillisecondCounter(juce::Time::getMillisecondCounter() + 50);
   }
+}
+
+juce::String NetProcess::getAppPath()
+{
+  return juce::File::getSpecialLocation(juce::File::currentExecutableFile)
+      .getSiblingFile(NODE_APP)
+      .getFullPathName();
 }

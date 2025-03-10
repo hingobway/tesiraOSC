@@ -5,6 +5,7 @@
 #include "gui/GlobalLAF.h"
 #include "net/IPC.h"
 #include "net/OSCWatch.h"
+#include "net/NetProcess.h"
 
 class MainComponent final : public juce::Component
 {
@@ -21,7 +22,7 @@ private:
   //==============================================================================
 
   // BACKEND
-  // NetSocket socket;
+  NetProcess netProcess;
   IPC ipc;
   OSCWatch osc;
 

@@ -1,11 +1,12 @@
 import { TesiraNet } from './telnet.ts';
 
 const tesira = new TesiraNet({
-  host: '169.254.3.243',
+  // host: '169.254.3.243',
+  // localAddress: '169.254.3.240',
+  host: '127.0.0.1',
   port: 23,
   negotiationMandatory: false,
   timeout: 5000,
-  localAddress: '169.254.3.240',
 });
 
 tesira.on('connected', () => console.log('connected to tesira'));

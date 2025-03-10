@@ -4,6 +4,7 @@ import { EventEmitter } from 'node:events';
 import { Telnet } from 'npm:telnet-client';
 
 import { TelnetOptions } from './util/telnetTypes.ts';
+import { FAKE_TELNET } from './util/dev.ts';
 
 const ENDLINE = '\r\n';
 
@@ -33,13 +34,23 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
 
   async sendMessage(msg: string) {
     if (!this.connected) return false;
-    console.log('FAKE SEND', msg);
+
+    if (FAKE_TELNET) {
+      console.log('FAKE SENT', msg);
+      return;
+    }
+
     telnet.send(msg);
     await this.waitForResponse('+OK');
   }
 
   async connect() {
-    // while (!this.connected) {
+    if (FAKE_TELNET) {
+      this.connected = true;
+      this.emit('connected');
+      return;
+    }
+
     try {
       console.log('telnet connecting...');
       await telnet.connect(this.options);
@@ -68,9 +79,8 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
         }
       });
     } catch (error) {
-      console.log('FAILED', error);
+      console.log('[TEL] FAILED', (error as any)?.message);
     }
-    // }
   }
 
   waitForResponse(response: string) {

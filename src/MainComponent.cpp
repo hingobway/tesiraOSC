@@ -13,15 +13,11 @@ MainComponent::MainComponent()
   l1.setFont(juce::FontOptions(20.0f));
   l1.setColour(juce::Label::ColourIds::textColourId, tw::ZINC_100);
 
-  b1.onClick = [this]()
-  {
-    // auto num = socket.getSelectedCueNumber(NetSocket::TCP);
-    // l1.setText("output: " + num, juce::dontSendNotification);
+  b1.onClick = [this]() { //
+    this->ipc.sendMessage("hi");
   };
 
-  osc.onMessage = [this](std::string msg)
-  {
-    DBG("received OSC message: " << msg);
+  osc.onMessage = [this](std::string msg) { //
     this->ipc.sendMessage(msg);
   };
 

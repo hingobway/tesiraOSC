@@ -11,32 +11,35 @@
 OSCWatch::OSCWatch() : juce::Thread("OSCWatch")
 {
 
-  bool success = udp.bindToPort(OSC_PORT);
+  bool success = udp.bindToPort(PORT_OSC);
   if (!success)
   {
-    DBG("PORT BIND FAILED");
+    DBG("[OSC] PORT BIND FAILED");
     return;
   }
 
-  this->startThread();
+  startThread();
 }
 
 OSCWatch::~OSCWatch()
 {
   bool cleanExit = stopThread(THREAD_KILL_TIMEOUT_MS);
   if (!cleanExit)
-    DBG("WARNING: OSC was killed prematurely.");
+    DBG("[OSC] WARNING: OSC was killed prematurely.");
 }
 
 void OSCWatch::run()
 {
+  juce::MessageManager::callAsync([]() { //
+    DBG("[OSC] LISTENING on port " << PORT_OSC);
+  });
 
   while (!threadShouldExit())
   {
     // wait for input
     int ready = udp.waitUntilReady(true, READ_WAIT_MS);
     if (ready == -1)
-      DBG("UDP ERROR");
+      DBG("[OSC] UDP ERROR");
     if (ready != 1)
       continue;
 
@@ -54,7 +57,7 @@ void OSCWatch::run()
       try
       {
 
-        DBG("COMMAND RECEIVED");
+        DBG("[OSC] COMMAND RECEIVED");
 
         auto command = std::string(msg.AddressPattern());
 
@@ -82,22 +85,19 @@ void OSCWatch::run()
         auto output = s.str().substr(0, s.str().size() - 1);
 
         {
-          juce::MessageManagerLock mml;
-          if (!mml.lockWasGained())
-            return;
-
-          DBG("running OSC callback");
           this->onMessage(output);
         }
       }
       catch (const osc::Exception &e)
       {
-        DBG("OSC PARSE ERROR: " << msg.AddressPattern() << ": " << e.what());
+        juce::MessageManagerLock mml;
+        DBG("[OSC] OSC PARSE ERROR: " << msg.AddressPattern() << ": " << e.what());
       }
     }
     catch (const osc::Exception &e)
     {
-      DBG("OSC ERROR: " << e.what());
+      juce::MessageManagerLock mml;
+      DBG("[OSC] OSC ERROR: " << e.what());
     }
   }
 }
