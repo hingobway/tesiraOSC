@@ -1,48 +1,59 @@
-import { TesiraNet } from './telnet.ts';
+import { TesiraWrapper } from './tesira.ts';
+import { Sockets } from './sockets.ts';
 
-// GET ARGS
-const PORT_IPC = parseInt(Deno.args[0]);
-if (!Number.isFinite(PORT_IPC)) console.error('MISSING IPC PORT');
+import { getHandleFunction } from './COMMANDS.ts';
 
-// TODO wait for IPC command to start this
-const tesira = new TesiraNet({
-  host: '127.0.0.1',
-  // host: '169.254.3.243',
-  // localAddress: '169.254.3.240',
-  port: 23,
-  negotiationMandatory: false,
-  timeout: 5000,
+// GET PORT
+const port = parseInt(Deno.args[0]);
+if (!Number.isFinite(port)) {
+  console.error('MISSING IPC PORT');
+  Deno.exit();
+}
+
+const tesira = new TesiraWrapper();
+const sockets = new Sockets();
+
+sockets.listen('message', (e) => {
+  let obj;
+  try {
+    obj = JSON.parse(e.data);
+  } catch (_) {
+    return;
+  }
+  if (!(typeof obj?.type === 'string')) return;
+  const handle = getHandleFunction(obj);
+
+  // COMMAND HANDLERS
+
+  handle('tesira_connect', (config) => {
+    tesira.startup(config);
+  });
+
+  handle('tesira_run', ({ message }) => {
+    tesira.sendMessage(message);
+  });
 });
 
-tesira.on('connected', () => console.log('connected to tesira'));
+// TELNET HANDLERS
 
-Deno.serve(
-  {
-    port: PORT_IPC,
-  },
-  (req) => {
-    if (req.headers.get('upgrade') != 'websocket')
-      return new Response(null, { status: 501 });
+tesira.on('connected', () => {
+  sockets.send('tesira_connect_status', { connected: true });
+});
+tesira.on('disconnect', () => {
+  sockets.send('tesira_connect_status', { connected: false });
+});
 
-    const { socket, response } = Deno.upgradeWebSocket(req);
+// SERVE WS
 
-    socket.addEventListener('open', () => {
-      console.log('new connection!');
-    });
+Deno.serve({ port }, (req) => {
+  if (req.headers.get('upgrade') != 'websocket')
+    return new Response(null, { status: 501 });
 
-    socket.addEventListener('message', async (e) => {
-      // run telnet
-      console.log('attempting telnet message ', e.data);
+  const { socket, response } = Deno.upgradeWebSocket(req);
 
-      try {
-        await tesira.sendMessage(e.data);
-        socket.send('TELNET SUCCESS');
-        console.log('success!');
-      } catch (_) {
-        console.log('FAILED');
-      }
-    });
+  socket.addEventListener('open', () => {
+    sockets.addSocket(socket);
+  });
 
-    return response;
-  }
-);
+  return response;
+});

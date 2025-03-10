@@ -7,7 +7,7 @@
 
 #include "components/NetStatus.h"
 
-class Network; // forward declaration (see .cpp)
+class Routing; // forward declaration (see .cpp)
 
 class MainComponent final : public juce::Component
 {
@@ -27,13 +27,12 @@ private:
   //==============================================================================
 
   // BACKEND
-  std::unique_ptr<Network> network;
+  std::unique_ptr<Routing> routing;
 
   // FRONTEND
   GLobalLAF globalLAF;
 
   juce::TextButton b1;
-  juce::Label l1;
 
 #ifdef JUCE_DEBUG
   melatonin::Inspector inspector;

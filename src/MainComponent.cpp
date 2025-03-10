@@ -1,5 +1,5 @@
 #include "MainComponent.h"
-#include "net/Network.h"
+#include "Routing.h"
 
 #include "util/colors.h"
 #include "util/fonts.h"
@@ -10,24 +10,19 @@ MainComponent::MainComponent()
     : inspector(*this, false)
 #endif
 {
-  network.reset(new Network(this));
+  routing.reset(new Routing(this));
 
   setSize(600, 400);
   setLookAndFeel(&globalLAF);
 
   b1.setButtonText("BUTTON");
-  l1.setText("OUTPUT", juce::dontSendNotification);
-  l1.setFont(fonts::Atkinson400().withHeight(20.0f));
-  l1.setColour(juce::Label::ColourIds::textColourId, tw::ZINC_100);
-
   b1.onClick = [this]() { //
-    network->commandSendTesira("abc def ghi");
+    routing->command_tesira_run("abc def ghi");
   };
 
+  // stacking order
   addAndMakeVisible(netStatus);
-
   addAndMakeVisible(b1);
-  addAndMakeVisible(l1);
 }
 
 MainComponent::~MainComponent()
@@ -50,8 +45,6 @@ void MainComponent::resized()
   const int py = 24;
 
   b1.setBounds(getWidth() - bw - px, getHeight() - py - bh, bw, bh);
-
-  l1.setBounds(px, py, getWidth() - px * 2, bh);
 
   auto ipcb = netStatus.getTextBounds();
   netStatus.setBounds(px, getHeight() - py - ipcb.getHeight(), ipcb.getWidth(), ipcb.getHeight());

@@ -32,7 +32,7 @@ public:
 
   void doTextLayout()
   {
-    auto tsize = 16.0f;
+    auto tsize = 20.0f;
     auto tcolor = tw::ZINC_400;
     auto font = fonts::Atkinson400().withHeight(tsize);
     auto font_b = fonts::Atkinson700().withHeight(tsize);

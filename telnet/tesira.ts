@@ -8,8 +8,6 @@ import { FAKE_TELNET } from './util/dev.ts';
 
 const ENDLINE = '\r\n';
 
-const telnet = new Telnet();
-
 export type TesiraEventMap = {
   connected: [];
   disconnect: [];
@@ -18,15 +16,16 @@ export type TesiraEventMap = {
 
 export class TesiraNet extends EventEmitter<TesiraEventMap> {
   connected = false;
-  options: TelnetOptions;
+  private options: TelnetOptions;
+  private telnet: Telnet;
 
   constructor(options: TelnetOptions) {
     super();
     this.options = options;
 
-    this.connect();
+    this.telnet = new Telnet();
 
-    telnet.on('close', () => {
+    this.telnet.on('close', () => {
       this.connected = false;
       this.emit('disconnect');
     });
@@ -40,24 +39,28 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
       return;
     }
 
-    telnet.send(msg);
-    await this.waitForResponse('+OK');
+    await this.telnet.send(msg);
+    const resp = await this.telnet.nextData();
+    console.log('RESPONSE RESPONSE: ', resp);
+    // await this.waitForResponse('+OK');
   }
 
   async connect() {
     if (FAKE_TELNET) {
-      this.connected = true;
-      this.emit('connected');
+      setTimeout(() => {
+        this.connected = true;
+        this.emit('connected');
+      }, 1000);
       return;
     }
 
     try {
       console.log('telnet connecting...');
-      await telnet.connect(this.options);
+      await this.telnet.connect(this.options);
 
       let buffer = '';
 
-      telnet.on('data', (data: Buffer) => {
+      this.telnet.on('data', (data: Buffer) => {
         const message = data.toString();
 
         if (!this.connected) {
@@ -83,6 +86,10 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
     }
   }
 
+  async close() {
+    await this.telnet.end();
+  }
+
   waitForResponse(response: string) {
     return new Promise<void>((resolve) => {
       let buffer = '';
@@ -97,13 +104,59 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
 
         if (response.trim() !== buffer.trim()) return;
 
-        telnet.removeListener('data', handler);
+        this.telnet.removeListener('data', handler);
         resolve();
 
         buffer = '';
       };
 
-      telnet.on('data', handler);
+      this.telnet.on('data', handler);
     });
   }
 }
+
+export class TesiraWrapper extends EventEmitter<TesiraEventMap> {
+  private tesira: TesiraNet;
+  private config: TesiranetConfig | null = null;
+
+  constructor() {
+    super();
+    this.tesira = new TesiraNet({});
+  }
+
+  private setup() {
+    if (!this.config) return;
+
+    this.tesira = new TesiraNet({
+      host: this.config.remoteAddress,
+      localAddress: this.config.localAddress,
+      port: 23,
+      negotiationMandatory: false,
+      timeout: 5000,
+    });
+
+    this.tesira.connect();
+
+    this.tesira.on('connected', () => {
+      this.emit('connected');
+    });
+    this.tesira.on('disconnect', () => {
+      this.emit('disconnect');
+      this.setup();
+    });
+  }
+
+  startup(config: TesiranetConfig) {
+    this.config = config;
+    this.setup();
+  }
+
+  sendMessage(msg: string) {
+    this.tesira.sendMessage(msg);
+  }
+}
+
+export type TesiranetConfig = {
+  remoteAddress: string;
+  localAddress: string;
+};

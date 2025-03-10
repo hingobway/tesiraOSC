@@ -9,7 +9,7 @@ set(TARGET_NAME "tesiratel")
 set(VERSION_NUMBER 0.1.0)
 
 # while debugging, disable the hosted node instance to use your own. node will always be hosted in production.
-# set(DISABLE_HOSTED_NODE 1)
+set(DISABLE_HOSTED_NODE 1)
 
 # ----------------------------------------
 

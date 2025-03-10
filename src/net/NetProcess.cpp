@@ -28,22 +28,23 @@ void NetProcess::run()
       return;
     }
 
-    // show console outputs if debuggin
+    // show console outputs if debugging
 
 #ifdef JUCE_DEBUG
 
-    process->readProcessOutput(dbuf, BUFFER_SIZE);
-
-    if (!strlen(dbuf))
+    int numread = process->readProcessOutput(dbuf, BUFFER_SIZE);
+    if (!numread)
       continue;
 
-    buffer += std::string(dbuf);
+    buffer += std::string(dbuf, numread);
 
     // print buffered lines
     {
       juce::MessageManagerLock mml;
       if (!mml.lockWasGained())
         return;
+
+      DBG("[NET] READ SOMETHING");
 
       // print complete lines
       size_t pos = 0;
@@ -54,8 +55,6 @@ void NetProcess::run()
         buffer.erase(0, pos + 1);
       }
     }
-
-    std::memset(dbuf, 0, BUFFER_SIZE);
 
 #endif
 
@@ -71,6 +70,9 @@ void NetProcess::runProcess()
       juce::File::getSpecialLocation(juce::File::currentExecutableFile)
           .getSiblingFile(NODE_APP)
           .getFullPathName();
+
+  if (NO_NODE_HOST) // allow for separate node in development
+    return;
 
   // start node process
   process->start(appPath + " " + std::to_string(PORT_IPC));

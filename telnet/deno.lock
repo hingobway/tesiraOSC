@@ -3,7 +3,8 @@
   "specifiers": {
     "jsr:@std/dotenv@*": "0.225.3",
     "npm:@types/node@*": "22.9.3",
-    "npm:telnet-client@*": "2.2.5"
+    "npm:telnet-client@*": "2.2.5",
+    "npm:zod@*": "3.24.2"
   },
   "jsr": {
     "@std/dotenv@0.225.3": {
@@ -38,6 +39,9 @@
     },
     "undici-types@6.19.8": {
       "integrity": "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="
+    },
+    "zod@3.24.2": {
+      "integrity": "sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ=="
     }
   },
   "workspace": {
