@@ -1,13 +1,20 @@
 [submodule "include/JUCE"]
 	path = include/JUCE
 	url = https://github.com/juce-framework/JUCE.git
-[submodule "include/oscpack"]
-	path = include/oscpack
-	url = https://github.com/mkalten/oscpack.git
-[submodule "include/websocketpp"]
-	path = include/websocketpp
-	url = https://github.com/zaphoyd/websocketpp.git
+	branch = master
 [submodule "include/melatonin_inspector"]
 	path = include/melatonin_inspector
 	url = https://github.com/sudara/melatonin_inspector.git
 	branch = main
+[submodule "include/oscpack"]
+	path = include/oscpack
+	url = https://github.com/RossBencina/oscpack.git
+	branch = master
+[submodule "include/asio"]
+	path = include/asio
+	url = https://github.com/chriskohlhoff/asio.git
+	branch = master
+[submodule "include/websocketpp"]
+	path = include/websocketpp
+	url = https://github.com/hingobway/websocketpp.git
+	branch = master

@@ -8,6 +8,9 @@ set(PROJECT_NAME "TESIRATEL")
 set(TARGET_NAME "tesiratel")
 set(VERSION_NUMBER 0.1.0)
 
+# while debugging, disable the hosted node instance to use your own. node will always be hosted in production.
+# set(DISABLE_HOSTED_NODE 1)
+
 # ----------------------------------------
 
 # PROJECT INIT
@@ -21,7 +24,6 @@ endif()
 add_subdirectory(include/JUCE JUCE)
 add_subdirectory(include/melatonin_inspector)
 
-find_package(Boost CONFIG REQUIRED)
 include(include/oscpack.cmake)
 include(include/websocketpp.cmake)
 
@@ -46,6 +48,12 @@ else()
   set(NODE_FULL_FILENAME "${NODE_FILENAME}")
 endif()
 
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Release" AND DISABLE_HOSTED_NODE)
+  set(NO_NODE_HOST_FINAL 1)
+else()
+  set(NO_NODE_HOST_FINAL 0)
+endif()
+
 # FINISH TARGET CONFIG
 target_compile_definitions(${TARGET_NAME}
   PUBLIC
@@ -63,9 +71,8 @@ target_compile_definitions(${TARGET_NAME}
 
   PRIVATE
   NODE_APP="${NODE_FULL_FILENAME}"
+  NO_NODE_HOST=${NO_NODE_HOST_FINAL}
 )
-
-target_include_directories(${TARGET_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
 
 # ADD FILES
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
@@ -103,16 +110,18 @@ target_link_libraries(${TARGET_NAME}
 # ----------------------------------------
 
 # NODE BUILD AND INSTALL
-set(NODE_FULL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${NODE_FILE_DIR}")
-set(NODE_FULL_BINDIR "${NODE_FULL_DIR}/${NODE_BINDIR}")
-set(NODE_PATH_SRC "${NODE_FULL_BINDIR}/${NODE_FULL_FILENAME}")
-set(NODE_PATH_DST "$<TARGET_FILE_DIR:${TARGET_NAME}>/${NODE_FULL_FILENAME}")
+if(NOT NO_NODE_HOST_FINAL)
+  set(NODE_FULL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${NODE_FILE_DIR}")
+  set(NODE_FULL_BINDIR "${NODE_FULL_DIR}/${NODE_BINDIR}")
+  set(NODE_PATH_SRC "${NODE_FULL_BINDIR}/${NODE_FULL_FILENAME}")
+  set(NODE_PATH_DST "$<TARGET_FILE_DIR:${TARGET_NAME}>/${NODE_FULL_FILENAME}")
 
-add_custom_command(TARGET ${TARGET_NAME} PRE_BUILD
-  COMMAND deno compile "-A" "-o" ${NODE_PATH_SRC} ${NODE_ENTRYPOINT}
-  WORKING_DIRECTORY ${NODE_FULL_DIR}
-)
-add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${NODE_PATH_SRC} ${NODE_PATH_DST}
-)
+  add_custom_command(TARGET ${TARGET_NAME} PRE_BUILD
+    COMMAND deno compile "-A" "-o" ${NODE_PATH_SRC} ${NODE_ENTRYPOINT}
+    WORKING_DIRECTORY ${NODE_FULL_DIR}
+  )
+  add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${NODE_PATH_SRC} ${NODE_PATH_DST}
+  )
+endif()

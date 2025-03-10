@@ -18,7 +18,7 @@ Network::Network(MainComponent *ui_)
     ui->netStatus.updateStatus(NetStatus::OSC, NetStatus::DISCONNECTED);
   };
   osc.onRunCommand = [this](std::string msg) { //
-    routeSendTesiraCommand(juce::String(msg));
+    commandSendTesira(juce::String(msg));
   };
 
   // ipc
