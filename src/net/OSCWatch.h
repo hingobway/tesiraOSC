@@ -16,7 +16,10 @@ public:
   OSCWatch();
   ~OSCWatch();
 
-  std::function<void(std::string)> onRunCommand;
+  // EVENT CALLBACKS
+  std::function<void(std::string cmd)> onRunCommand;
+  std::function<void()> onListening;
+  std::function<void()> onListenFailed;
 
 private:
   void run() override;

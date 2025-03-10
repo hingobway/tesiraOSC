@@ -15,6 +15,8 @@ OSCWatch::OSCWatch() : juce::Thread("OSCWatch")
   if (!success)
   {
     DBG("[OSC] PORT BIND FAILED");
+    if (onListenFailed)
+      onListenFailed();
     return;
   }
 
@@ -30,8 +32,10 @@ OSCWatch::~OSCWatch()
 
 void OSCWatch::run()
 {
-  juce::MessageManager::callAsync([]() { //
+  juce::MessageManager::callAsync([this]() { //
     DBG("[OSC] LISTENING on port " << PORT_OSC);
+    if (onListening)
+      onListening();
   });
 
   while (!threadShouldExit())

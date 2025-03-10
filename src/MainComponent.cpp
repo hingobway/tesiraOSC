@@ -24,7 +24,7 @@ MainComponent::MainComponent()
     network->commandSendTesira("abc def ghi");
   };
 
-  addAndMakeVisible(ipcStatus);
+  addAndMakeVisible(netStatus);
 
   addAndMakeVisible(b1);
   addAndMakeVisible(l1);
@@ -53,6 +53,6 @@ void MainComponent::resized()
 
   l1.setBounds(px, py, getWidth() - px * 2, bh);
 
-  auto ipcb = ipcStatus.getTextBounds();
-  ipcStatus.setBounds(px, getHeight() - py - ipcb.getHeight(), ipcb.getWidth(), ipcb.getHeight());
+  auto ipcb = netStatus.getTextBounds();
+  netStatus.setBounds(px, getHeight() - py - ipcb.getHeight(), ipcb.getWidth(), ipcb.getHeight());
 }

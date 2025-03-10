@@ -10,15 +10,23 @@ Network::Network(MainComponent *ui_)
 {
   // REGISTER LISTENERS
 
+  // osc
+  osc.onListening = [this]() { //
+    ui->netStatus.updateStatus(NetStatus::OSC, NetStatus::CONNECTED);
+  };
+  osc.onListenFailed = [this]() { //
+    ui->netStatus.updateStatus(NetStatus::OSC, NetStatus::DISCONNECTED);
+  };
   osc.onRunCommand = [this](std::string msg) { //
     routeSendTesiraCommand(juce::String(msg));
   };
 
+  // ipc
   ipc.onConnect = [this]() { //
-    ui->ipcStatus.updateStatus(IPCStatus::CONNECTED);
+    ui->netStatus.updateStatus(NetStatus::IPC, NetStatus::CONNECTED);
   };
   ipc.onDisconnect = [this]() { //
-    ui->ipcStatus.updateStatus(IPCStatus::DISCONNECTED);
+    ui->netStatus.updateStatus(NetStatus::IPC, NetStatus::DISCONNECTED);
   };
   ipc.onMessage = [this](std::string msg) { //
     handleMessage(msg);

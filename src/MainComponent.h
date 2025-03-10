@@ -5,7 +5,7 @@
 
 #include "gui/GlobalLAF.h"
 
-#include "components/IPCStatus.h"
+#include "components/NetStatus.h"
 
 class Network; // forward declaration (see .cpp)
 
@@ -21,7 +21,7 @@ public:
   void resized() override;
 
   // CHILD COMPONENTS
-  IPCStatus ipcStatus;
+  NetStatus netStatus;
 
 private:
   //==============================================================================
