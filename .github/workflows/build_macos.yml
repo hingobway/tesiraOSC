@@ -1,0 +1,51 @@
+name: build macOS
+on:
+  push:
+    tags: ['*']
+  workflow_dispatch:
+
+env:
+  OUT_PATH: build/tesiratel_artefacts/Release
+  OUT_FILE: tesiraOSC.zip
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      # prepare codebase
+      - uses: actions/checkout@v4.1.6
+
+      # prep system
+      - name: set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+      - name: install deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: install brew packages
+        run: |
+          brew install --formula cmake zip
+
+      # cmake build
+      - name: dependencies
+        run: |
+          git submodule update --init
+      - name: cmake build
+        run: |
+          cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+
+      # compile
+      - name: bundle
+        working-directory: ${{env.OUT_PATH}}
+        run: |
+          zip ${{env.OUT_FILE}} *.app
+
+      # upload
+      - name: upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.OUT_FILE}}
+          path: ${{env.OUT_PATH}}/${{env.OUT_FILE}}
