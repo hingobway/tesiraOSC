@@ -47,6 +47,6 @@ void MainComponent::resized()
   const int bh = 32;
   b1.setBounds(getWidth() - bw - px, getHeight() - py - bh, bw, bh);
 
-  auto ipcb = netStatus.getTextBounds();
+  auto ipcb = netStatus.getTextBounds().toNearestInt();
   netStatus.setBounds(px, getHeight() - py - ipcb.getHeight(), ipcb.getWidth(), ipcb.getHeight());
 }

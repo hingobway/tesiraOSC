@@ -36,7 +36,7 @@ void NetProcess::run()
     if (!numread)
       continue;
 
-    buffer += std::string(dbuf, numread);
+    buffer += std::string(dbuf, (size_t)numread);
 
     // print buffered lines
     {

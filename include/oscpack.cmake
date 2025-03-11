@@ -1,6 +1,9 @@
-set(BASE include/oscpack)
+set(BASE ${CMAKE_CURRENT_LIST_DIR}/oscpack)
 
-ADD_LIBRARY(oscpack
+add_library(oscpack)
+
+target_sources(oscpack
+  PRIVATE
   ${BASE}/osc/OscTypes.h
   ${BASE}/osc/OscTypes.cpp
   ${BASE}/osc/OscHostEndianness.h
@@ -15,8 +18,6 @@ ADD_LIBRARY(oscpack
   ${BASE}/osc/OscOutboundPacketStream.cpp
 )
 
-target_compile_options(oscpack PUBLIC "-w")
-
 target_include_directories(oscpack PRIVATE ${BASE})
 
-target_include_directories(oscpack INTERFACE ${BASE})
+target_include_directories(oscpack SYSTEM INTERFACE ${BASE})

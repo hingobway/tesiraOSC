@@ -14,7 +14,7 @@ class OSCWatch : private juce::Thread
 {
 public:
   OSCWatch();
-  ~OSCWatch();
+  ~OSCWatch() override;
 
   // EVENT CALLBACKS
   std::function<void(std::string cmd)> onRunCommand;

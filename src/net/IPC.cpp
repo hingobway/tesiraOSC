@@ -87,7 +87,7 @@ void IPC::run()
 
 // HANDLERS
 
-void IPC::handleMessage(WS::hdl hdl, WS::msg msg)
+void IPC::handleMessage(WS::hdl, WS::msg msg)
 {
   juce::MessageManager::callAsync([this, msg]() { //
     if (onMessage)
@@ -107,7 +107,7 @@ void IPC::handleConnect(WS::hdl hdl_)
   });
 }
 
-void IPC::handleFailOrClose(WS::hdl hdl)
+void IPC::handleFailOrClose(WS::hdl)
 {
   // restart thread (from main thread)
   juce::MessageManager::callAsync([this]() { //

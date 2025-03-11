@@ -22,7 +22,7 @@ class IPC : private juce::Thread
 {
 public:
   IPC();
-  ~IPC();
+  ~IPC() override;
 
   void sendCommand(std::string type, juce::var data);
   void sendCommandString(const std::string &msg);
