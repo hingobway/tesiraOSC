@@ -55,7 +55,8 @@ void NetProcess::run()
         buffer.erase(0, pos + 1);
       }
     }
-
+#else
+    juce::ignoreUnused(dbuf);
 #endif
 
     juce::Time::waitForMillisecondCounter(juce::Time::getMillisecondCounter() + 50);
@@ -64,15 +65,21 @@ void NetProcess::run()
 
 void NetProcess::runProcess()
 {
+  if (NO_NODE_HOST) // allow for separate node in development
+    return;
+
+  std::string filename{NODE_APP};
+  // univeral binary needs intel node file
+#if defined(__APPLE__) && !defined(__aarch64__)
+  filename = std::string("intel-") + filename;
+#endif
+
   // init
   process.reset(new juce::ChildProcess());
   auto appPath =
       juce::File::getSpecialLocation(juce::File::currentExecutableFile)
-          .getSiblingFile(NODE_APP)
+          .getSiblingFile(filename)
           .getFullPathName();
-
-  if (NO_NODE_HOST) // allow for separate node in development
-    return;
 
   // start node process
   process->start(appPath + " " + std::to_string(PORT_IPC));

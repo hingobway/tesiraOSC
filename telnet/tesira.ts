@@ -40,8 +40,8 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
     }
 
     await this.telnet.send(msg);
-    const resp = await this.telnet.nextData();
-    console.log('RESPONSE RESPONSE: ', resp);
+    /*  const resp =  */ await this.telnet.nextData();
+    // console.log('RESPONSE RESPONSE: ', resp);
     // await this.waitForResponse('+OK');
   }
 
@@ -55,7 +55,7 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
     }
 
     try {
-      console.log('telnet connecting...');
+      // console.log('telnet connecting...');
       await this.telnet.connect(this.options);
 
       let buffer = '';
@@ -74,15 +74,15 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
         if (buffer.endsWith(ENDLINE)) {
           // HANDLE MESSAGE
 
-          console.log('MESSAGE RECEIVED:', buffer);
+          // console.log('MESSAGE RECEIVED:', buffer);
 
           this.emit('message', buffer);
 
           buffer = '';
         }
       });
-    } catch (error) {
-      console.log('[TEL] FAILED', (error as any)?.message);
+    } catch (/* error */ _) {
+      // console.log('[TEL] FAILED', (error as any)?.message);
     }
   }
 

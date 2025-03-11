@@ -6,11 +6,15 @@ on:
 
 env:
   OUT_PATH: build/tesiratel_artefacts/Release
-  OUT_FILE: tesiraOSC.zip
 
 jobs:
   build:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - arch: 'x86_64'
+          - arch: 'arm64'
     permissions:
       contents: write
     steps:
@@ -24,28 +28,19 @@ jobs:
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: install brew packages
-        run: |
-          brew install --formula cmake zip
 
       # cmake build
       - name: dependencies
         run: |
           git submodule update --init
-      - name: cmake build
+      - name: cmake build - ${{matrix.arch}}
         run: |
-          cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+          cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=${{matrix.arch}}
           cmake --build build
-
-      # compile
-      - name: bundle
-        working-directory: ${{env.OUT_PATH}}
-        run: |
-          zip ${{env.OUT_FILE}} *.app
 
       # upload
       - name: upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: ${{env.OUT_FILE}}
-          path: ${{env.OUT_PATH}}/${{env.OUT_FILE}}
+          name: macOS_${{ matrix.arch }}
+          path: ${{env.OUT_PATH}}/

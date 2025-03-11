@@ -16,10 +16,6 @@ set(DISABLE_HOSTED_NODE 1)
 # PROJECT INIT
 project(${PROJECT_NAME} VERSION ${VERSION_NUMBER})
 
-if(APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
-  set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
-endif()
-
 # PACKAGE INCLUDE
 add_subdirectory(include/JUCE JUCE)
 add_subdirectory(include/melatonin_inspector)
@@ -116,12 +112,30 @@ if(NOT NO_NODE_HOST_FINAL)
   set(NODE_PATH_SRC "${NODE_FULL_BINDIR}/${NODE_FULL_FILENAME}")
   set(NODE_PATH_DST "$<TARGET_FILE_DIR:${TARGET_NAME}>/${NODE_FULL_FILENAME}")
 
-  add_custom_command(TARGET ${TARGET_NAME} PRE_BUILD
-    COMMAND deno compile "-A" "-o" ${NODE_PATH_SRC} ${NODE_ENTRYPOINT}
-    WORKING_DIRECTORY ${NODE_FULL_DIR}
-  )
-  add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    ${NODE_PATH_SRC} ${NODE_PATH_DST}
-  )
+  # build binary for all platforms except intel mac
+  if(NOT APPLE OR "arm64" IN_LIST CMAKE_OSX_ARCHITECTURES)
+    add_custom_command(TARGET ${TARGET_NAME} PRE_BUILD
+      COMMAND deno compile "-A" "-o" ${NODE_PATH_SRC} ${NODE_ENTRYPOINT}
+      WORKING_DIRECTORY ${NODE_FULL_DIR}
+    )
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy
+      ${NODE_PATH_SRC} ${NODE_PATH_DST}
+    )
+  endif()
+
+  # build mac intel binary (separate for universal)
+  if(APPLE AND "x86_64" IN_LIST CMAKE_OSX_ARCHITECTURES)
+    set(NODE_PATH_SRC "${NODE_FULL_BINDIR}/intel-${NODE_FULL_FILENAME}")
+    set(NODE_PATH_DST "$<TARGET_FILE_DIR:${TARGET_NAME}>/intel-${NODE_FULL_FILENAME}")
+
+    add_custom_command(TARGET ${TARGET_NAME} PRE_BUILD
+      COMMAND deno compile "--target" "x86_64-apple-darwin" "-A" "-o" ${NODE_PATH_SRC} ${NODE_ENTRYPOINT}
+      WORKING_DIRECTORY ${NODE_FULL_DIR}
+    )
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy
+      ${NODE_PATH_SRC} ${NODE_PATH_DST}
+    )
+  endif()
 endif()
