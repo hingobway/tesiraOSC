@@ -16,6 +16,7 @@ MainComponent::MainComponent()
   setLookAndFeel(&globalLAF);
 
   b1.setButtonText("CONNECT");
+  b1.setColour(juce::ComboBox::outlineColourId, tw::ZINC_100.withAlpha(0.2f));
   b1.onClick = [this]() { //
     routing->tesira_connect("", "");
   };
@@ -38,12 +39,12 @@ void MainComponent::paint(juce::Graphics &g)
 
 void MainComponent::resized()
 {
-  const int bw = 120;
-  const int bh = 32;
 
   const int px = 24;
   const int py = 24;
 
+  const int bw = 120;
+  const int bh = 32;
   b1.setBounds(getWidth() - bw - px, getHeight() - py - bh, bw, bh);
 
   auto ipcb = netStatus.getTextBounds();

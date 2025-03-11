@@ -43,10 +43,5 @@
     "zod@3.24.2": {
       "integrity": "sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ=="
     }
-  },
-  "workspace": {
-    "dependencies": [
-      "jsr:@std/assert@1"
-    ]
   }
 }
