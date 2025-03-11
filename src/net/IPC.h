@@ -24,8 +24,8 @@ public:
   IPC();
   ~IPC();
 
-  void sendMessage(std::string type, juce::var data);
-  void sendMessageString(const std::string &msg);
+  void sendCommand(std::string type, juce::var data);
+  void sendCommandString(const std::string &msg);
 
   // EVENT CALLBACKS
   std::function<void(std::string)> onMessage;

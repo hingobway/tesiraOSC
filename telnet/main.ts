@@ -1,7 +1,6 @@
 import { TesiraWrapper } from './tesira.ts';
 import { Sockets } from './sockets.ts';
-
-import { getHandleFunction } from './COMMANDS.ts';
+import { Routing } from './Routing.ts';
 
 // GET PORT
 const port = parseInt(Deno.args[0]);
@@ -10,10 +9,13 @@ if (!Number.isFinite(port)) {
   Deno.exit();
 }
 
+// CONNECTIONS INIT
 const tesira = new TesiraWrapper();
-const sockets = new Sockets();
+const ipc = new Sockets();
+const routes = new Routing(tesira, ipc);
 
-sockets.listen('message', (e) => {
+// IPC HANDLING
+ipc.listen('message', (e) => {
   let obj;
   try {
     obj = JSON.parse(e.data);
@@ -21,30 +23,14 @@ sockets.listen('message', (e) => {
     return;
   }
   if (!(typeof obj?.type === 'string')) return;
-  const handle = getHandleFunction(obj);
 
-  // COMMAND HANDLERS
-
-  handle('tesira_connect', (config) => {
-    tesira.startup(config);
-  });
-
-  handle('tesira_run', ({ message }) => {
-    tesira.sendMessage(message);
-  });
+  routes.IPCHandlers(obj);
 });
 
-// TELNET HANDLERS
-
-tesira.on('connected', () => {
-  sockets.send('tesira_connect_status', { connected: true });
-});
-tesira.on('disconnect', () => {
-  sockets.send('tesira_connect_status', { connected: false });
-});
+// TELNET HANDLING
+routes.TesiraHandlers();
 
 // SERVE WS
-
 Deno.serve({ port }, (req) => {
   if (req.headers.get('upgrade') != 'websocket')
     return new Response(null, { status: 501 });
@@ -52,7 +38,7 @@ Deno.serve({ port }, (req) => {
   const { socket, response } = Deno.upgradeWebSocket(req);
 
   socket.addEventListener('open', () => {
-    sockets.addSocket(socket);
+    ipc.addSocket(socket);
   });
 
   return response;

@@ -15,9 +15,9 @@ MainComponent::MainComponent()
   setSize(600, 400);
   setLookAndFeel(&globalLAF);
 
-  b1.setButtonText("BUTTON");
+  b1.setButtonText("CONNECT");
   b1.onClick = [this]() { //
-    routing->command_tesira_run("abc def ghi");
+    routing->tesira_connect("", "");
   };
 
   // stacking order

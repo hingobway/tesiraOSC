@@ -134,6 +134,7 @@ export class TesiraWrapper extends EventEmitter<TesiraEventMap> {
       negotiationMandatory: false,
       timeout: 5000,
     });
+    this.emit('disconnect');
 
     this.tesira.connect();
 

@@ -2,35 +2,80 @@
 
 #include <juce_core/juce_core.h>
 
-#include "util/json.h"
+#include "net/RoutingWrapper.h"
 
-#include "MainComponent.h"
-#include "net/IPC.h"
-#include "net/OSCWatch.h"
-#include "net/NetProcess.h"
-
-class Routing
+class Routing : private RoutingWrapper
 {
 public:
-  Routing(MainComponent *);
-  ~Routing();
+  Routing(MainComponent *ui_)
+      : RoutingWrapper(
+            ui_,
+            // REGISTER ROUTES
+            {
+                {{"tesira_connect_status"}, [this](auto p)
+                 { return route_tesira_connect_status(p); }}
+                // ,{{""}, [this](auto p){return route(p);}}
+            })
+  {
+    // REGISTER LISTENERS
 
-  void handleMessage(juce::String msg);
+    // osc
+    osc.onListening = [this]() { //
+      ui->netStatus.updateStatus(NetStatus::OSC, NetStatus::CONNECTED);
+    };
+    osc.onListenFailed = [this]() { //
+      ui->netStatus.updateStatus(NetStatus::OSC, NetStatus::DISCONNECTED);
+    };
+    osc.onRunCommand = [this](std::string msg) { //
+      tesira_run(juce::String(msg));
+    };
 
-  void command_tesira_run(juce::String cmd);
-  void command_tesira_run2(juce::String cmd);
+    // ipc
+    ipc.onMessage = [this](std::string msg) { //
+      handleMessage(msg);
+    };
+    ipc.onConnect = [this]() { //
+      ui->netStatus.updateStatus(NetStatus::IPC, NetStatus::CONNECTED);
+    };
+    ipc.onDisconnect = [this]() { //
+      ui->netStatus.updateStatus(NetStatus::IPC, NetStatus::DISCONNECTED);
+    };
+  }
+
+  // COMMANDS
+
+  void tesira_run(juce::String message)
+  {
+    JSON_OBJ(cmd)
+    {
+      cmd->setProperty("message", message);
+    }
+    ipc.sendCommand("tesira_run", juce::var(cmd));
+  }
+
+  void tesira_connect(juce::String remoteAddress, juce::String localAddress)
+  {
+    JSON_OBJ(cmd)
+    {
+      cmd->setProperty("remoteAddress", remoteAddress);
+      cmd->setProperty("localAddress", localAddress);
+    }
+    ipc.sendCommand("tesira_connect", juce::var(cmd));
+  }
 
 private:
-  MainComponent *ui;
-  NetProcess netProcess;
-  IPC ipc;
-  OSCWatch osc;
-
   // ROUTES
 
-  void route_tesira_connect_status(juce::var);
+  void route_tesira_connect_status(juce::var p)
+  {
+    auto c = p.getProperty("connected", JSNIL);
+    if (!c.isBool())
+      return;
 
-  std::unordered_map<std::string, std::function<void(juce::var)>> routes;
+    ui->netStatus.updateStatus(
+        NetStatus::TESIRA,
+        (!!c) ? NetStatus::CONNECTED : NetStatus::DISCONNECTED);
+  }
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Routing)
 };

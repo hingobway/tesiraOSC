@@ -17,7 +17,7 @@ IPC::~IPC()
 
 // PUBLIC
 
-void IPC::sendMessage(std::string type, juce::var data)
+void IPC::sendCommand(std::string type, juce::var data)
 {
   JSON_OBJ(cmd)
   {
@@ -25,10 +25,10 @@ void IPC::sendMessage(std::string type, juce::var data)
     cmd->setProperty("data", data);
   }
   auto jsonstring = juce::JSON::toString(juce::var(cmd)).toStdString();
-  sendMessageString(jsonstring);
+  sendCommandString(jsonstring);
 }
 
-void IPC::sendMessageString(const std::string &msg)
+void IPC::sendCommandString(const std::string &msg)
 {
   juce::MessageManagerLock mml;
   if (!mml.lockWasGained())
@@ -91,7 +91,7 @@ void IPC::handleMessage(WS::hdl hdl, WS::msg msg)
 {
   juce::MessageManager::callAsync([this, msg]() { //
     if (onMessage)
-      (msg->get_payload());
+      onMessage(msg->get_payload());
   });
 }
 
