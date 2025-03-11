@@ -4,7 +4,7 @@
 
 #include "../OPTIONS.h"
 
-#define BUFFER_SIZE (1024)
+#define PROC_BUFFER_SIZE (1024)
 
 class NetProcess : private juce::Thread
 {

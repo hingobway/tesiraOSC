@@ -10,8 +10,6 @@ IPC::IPC() : juce::Thread("IPC")
 
 IPC::~IPC()
 {
-  if (ws)
-    ws->close(hdl, websocketpp::close::status::going_away, "QUIT");
   stopThread(80);
 }
 

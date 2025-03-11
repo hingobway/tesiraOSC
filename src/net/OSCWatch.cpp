@@ -48,9 +48,8 @@ void OSCWatch::run()
       continue;
 
     // read message
-    int bytesRead = udp.read(readBuffer, BUFFER_SIZE, false);
-    std::string text{readBuffer};
-    if (!text.length())
+    int bytesRead = udp.read(readBuffer, OSC_BUFFER_SIZE, false);
+    if (!bytesRead)
       continue;
 
     // PROCESS MESSAGE
@@ -76,22 +75,25 @@ void OSCWatch::run()
         for (auto it = argb; it != arge; ++it)
         {
           if (it->IsString())
-            s << it->AsString() << " ";
+            s << " " << it->AsString();
           else if (it->IsInt32())
-            s << it->AsInt32() << " ";
+            s << " " << it->AsInt32();
           else if (it->IsInt64())
-            s << it->AsInt64() << " ";
+            s << " " << it->AsInt64();
           else if (it->IsFloat())
-            s << it->AsFloat() << " ";
+            s << " " << std::fixed << it->AsFloat();
           else if (it->IsDouble())
-            s << it->AsDouble() << " ";
+            s << " " << std::fixed << it->AsDouble();
         }
-        auto output = s.str().substr(0, s.str().size() - 1);
+        auto output = s.str();
+        if (output.empty())
+          continue;
+        output.erase(0, 1);
 
-        {
+        juce::MessageManager::callAsync([this, output]() { //
           if (onRunCommand)
             onRunCommand(output);
-        }
+        });
       }
       catch (const osc::Exception &e)
       {

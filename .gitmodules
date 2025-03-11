@@ -8,7 +8,7 @@
 	branch = main
 [submodule "include/oscpack"]
 	path = include/oscpack
-	url = https://github.com/RossBencina/oscpack.git
+	url = https://github.com/hingobway/oscpack.git
 	branch = master
 [submodule "include/asio"]
 	path = include/asio

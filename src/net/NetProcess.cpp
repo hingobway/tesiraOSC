@@ -14,7 +14,7 @@ NetProcess::~NetProcess()
 void NetProcess::run()
 {
   static std::string buffer{};
-  char dbuf[BUFFER_SIZE]{};
+  char dbuf[PROC_BUFFER_SIZE]{};
 
   // event loop
   while (!threadShouldExit())
@@ -32,7 +32,7 @@ void NetProcess::run()
 
 #ifdef JUCE_DEBUG
 
-    int numread = process->readProcessOutput(dbuf, BUFFER_SIZE);
+    int numread = process->readProcessOutput(dbuf, PROC_BUFFER_SIZE);
     if (!numread)
       continue;
 

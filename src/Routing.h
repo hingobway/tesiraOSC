@@ -36,9 +36,12 @@ public:
     };
     ipc.onConnect = [this]() { //
       ui->netStatus.updateStatus(NetStatus::IPC, NetStatus::CONNECTED);
+
+      // TODO request a tesira connect here (need to fetch ip address)
     };
     ipc.onDisconnect = [this]() { //
       ui->netStatus.updateStatus(NetStatus::IPC, NetStatus::DISCONNECTED);
+      ui->netStatus.updateStatus(NetStatus::TESIRA, NetStatus::DISCONNECTED);
     };
   }
 

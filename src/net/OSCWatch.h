@@ -8,7 +8,7 @@
 
 #define THREAD_KILL_TIMEOUT_MS (220)
 #define READ_WAIT_MS (200)
-#define BUFFER_SIZE (1024)
+#define OSC_BUFFER_SIZE (4096)
 
 class OSCWatch : private juce::Thread
 {
@@ -25,7 +25,7 @@ private:
   void run() override;
 
   juce::DatagramSocket udp;
-  char readBuffer[BUFFER_SIZE];
+  char readBuffer[OSC_BUFFER_SIZE];
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OSCWatch)
 };
