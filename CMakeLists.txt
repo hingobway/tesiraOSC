@@ -25,11 +25,11 @@ include(include/websocketpp.cmake)
 
 # JUCE CONFIG
 juce_add_gui_app(${TARGET_NAME}
-  PRODUCT_NAME "TESIRATEL"
+  PRODUCT_NAME "tesiraOSC"
 
   # manufacturer
   COMPANY_NAME "foster"
-  BUNDLE_ID "audio.foster.tesiratel"
+  BUNDLE_ID "audio.foster.tesiraOSC"
 )
 
 # NODE DIR SETUP
