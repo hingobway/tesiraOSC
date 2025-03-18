@@ -50,12 +50,13 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
       setTimeout(() => {
         this.connected = true;
         this.emit('connected');
+        console.log('FAKE CONNECTION');
       }, 1000);
       return;
     }
 
     try {
-      // console.log('telnet connecting...');
+      console.log('telnet connecting...');
       await this.telnet.connect(this.options);
 
       let buffer = '';
@@ -81,8 +82,8 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
           buffer = '';
         }
       });
-    } catch (/* error */ _) {
-      // console.log('[TEL] FAILED', (error as any)?.message);
+    } catch (error) {
+      console.log('[TEL] FAILED', (error as any)?.message);
     }
   }
 

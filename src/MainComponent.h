@@ -6,9 +6,9 @@
 #include "gui/GlobalLAF.h"
 
 #include "components/NetStatus.h"
-#include "components/Settings.h"
 
-class Routing; // forward declaration (see .cpp)
+class Routing;       // forward declaration (see .cpp)
+class SettingsPanel; // forward declaration (see .cpp)
 
 class MainComponent final : public juce::Component
 {
@@ -23,13 +23,13 @@ public:
 
   // CHILD COMPONENTS
   NetStatus netStatus;
-  SettingsPanel settingsPanel;
-
-private:
-  //==============================================================================
+  std::unique_ptr<SettingsPanel> settingsPanel;
 
   // BACKEND
   std::unique_ptr<Routing> routing;
+
+private:
+  //==============================================================================
 
   // FRONTEND
   GLobalLAF globalLAF;
