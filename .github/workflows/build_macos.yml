@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-  OUT_PATH: build/tesiratel_artefacts/Release
+  OUT_PATH: build/tesiraOSC_artefacts/Release
 
 jobs:
   build:
