@@ -4,8 +4,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # ----------------------------------------
 # VARIABLES
-set(PROJECT_NAME "TESIRATEL")
-set(TARGET_NAME "tesiratel")
+set(PROJECT_NAME "TESIRA_OSC")
+set(TARGET_NAME "tesiraOSC")
 set(VERSION_NUMBER 0.1.0)
 
 # while debugging, disable the hosted node instance to use your own. node will always be hosted in production.
@@ -16,6 +16,14 @@ set(DISABLE_HOSTED_NODE 1)
 # PROJECT INIT
 project(${PROJECT_NAME} VERSION ${VERSION_NUMBER})
 
+if(APPLE)
+  execute_process(
+    COMMAND uname -m
+    OUTPUT_VARIABLE CMAKE_OSX_ARCHITECTURES
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+endif()
+
 # PACKAGE INCLUDE
 add_subdirectory(include/JUCE JUCE)
 add_subdirectory(include/melatonin_inspector)
@@ -25,7 +33,7 @@ include(include/websocketpp.cmake)
 
 # JUCE CONFIG
 juce_add_gui_app(${TARGET_NAME}
-  PRODUCT_NAME "tesiraOSC"
+  PRODUCT_NAME ${TARGET_NAME}
 
   # manufacturer
   COMPANY_NAME "foster"

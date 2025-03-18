@@ -2,7 +2,7 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../util/colors.h"
+#include "../../util/colors.h"
 
 class Button : public juce::TextButton
 {

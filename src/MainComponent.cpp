@@ -12,18 +12,13 @@ MainComponent::MainComponent()
 {
   routing.reset(new Routing(this));
 
-  setSize(600, 400);
-  setLookAndFeel(&globalLAF);
+  setSize(518, 275);
 
-  b1.setButtonText("CONNECT");
-  b1.setColour(juce::ComboBox::outlineColourId, tw::ZINC_100.withAlpha(0.2f));
-  b1.onClick = [this]() { //
-    routing->tesira_connect("", "");
-  };
+  setLookAndFeel(&globalLAF);
 
   // stacking order
   addAndMakeVisible(netStatus);
-  addAndMakeVisible(b1);
+  addAndMakeVisible(settingsPanel);
 }
 
 MainComponent::~MainComponent()
@@ -39,14 +34,14 @@ void MainComponent::paint(juce::Graphics &g)
 
 void MainComponent::resized()
 {
+  const int GAP = 24;
 
-  const int px = 24;
-  const int py = 24;
-
-  const int bw = 120;
-  const int bh = 32;
-  b1.setBounds(getWidth() - bw - px, getHeight() - py - bh, bw, bh);
-
-  auto ipcb = netStatus.getTextBounds().toNearestInt();
-  netStatus.setBounds(px, getHeight() - py - ipcb.getHeight(), ipcb.getWidth(), ipcb.getHeight());
+  juce::FlexBox fb{};
+  fb.flexDirection = juce::FlexBox::Direction::column;
+  {
+    fb.items.add(juce::FlexItem(settingsPanel).withFlex(1));
+    fb.items.add(juce::FlexItem().withHeight(GAP));
+    fb.items.add(juce::FlexItem(netStatus).withHeight(netStatus.minBounds().getHeight()));
+  }
+  fb.performLayout(getLocalBounds().reduced(GAP));
 }

@@ -6,7 +6,7 @@
 #include "gui/GlobalLAF.h"
 
 #include "components/NetStatus.h"
-#include "components/Button.h"
+#include "components/Settings.h"
 
 class Routing; // forward declaration (see .cpp)
 
@@ -23,6 +23,7 @@ public:
 
   // CHILD COMPONENTS
   NetStatus netStatus;
+  SettingsPanel settingsPanel;
 
 private:
   //==============================================================================
@@ -32,8 +33,6 @@ private:
 
   // FRONTEND
   GLobalLAF globalLAF;
-
-  Button b1;
 
 #ifdef JUCE_DEBUG
   melatonin::Inspector inspector;
