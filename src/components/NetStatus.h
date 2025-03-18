@@ -61,6 +61,7 @@ public:
   void updateStatus(StatusType type, Status ns)
   {
     status[type].setStatus(ns);
+    repaint();
   }
 
 private:

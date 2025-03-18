@@ -23,7 +23,9 @@ public:
     setColour(juce::TextEditor::ColourIds::textColourId, tw::ZINC_100);
 
     setFont(fonts::Atkinson400().withHeight(FONT_SIZE));
-  }
+
+    setJustification(juce::Justification::centredLeft);
+    }
   ~Textbox()
   {
     setLookAndFeel(nullptr);
@@ -46,7 +48,7 @@ private:
         g.setColour(textEditor.findColour(juce::TextEditor::outlineColourId));
 
       // draw
-      g.drawRoundedRectangle(juce::Rectangle<int>(0, 0, width, height).toFloat(), BORDER_RADIUS, BORDER_WIDTH);
+      g.drawRoundedRectangle(juce::Rectangle<int>(0, 0, width, height).reduced(1).toFloat(), BORDER_RADIUS, BORDER_WIDTH);
     }
 
     void fillTextEditorBackground(juce::Graphics &g, int width, int height, juce::TextEditor &textEditor) override

@@ -7,21 +7,26 @@
 
 class Label : public juce::Label
 {
+
 public:
   Label()
   {
     setLookAndFeel(&laf);
 
-    setColour(juce::Label::ColourIds::textColourId, tw::ZINC_300);
-    setFont(fonts::Atkinson400().withHeight(14.0f));
+    setColour(juce::Label::ColourIds::textColourId, tw::ZINC_400);
+    setFont(fonts::Atkinson400().withHeight(17.5f));
   }
   ~Label()
   {
     setLookAndFeel(nullptr);
   }
 
-  void paint(juce::Graphics &g) override {}
-  void resized() override {}
+  juce::Rectangle<float> minBounds()
+  {
+    juce::AttributedString s;
+    s.append(getText(), getFont());
+    return juce::TextLayout::getStringBounds(s);
+  }
 
 private:
   class LAF : public juce::LookAndFeel_V4
