@@ -9,14 +9,14 @@ set(TARGET_NAME "tesiraOSC")
 set(VERSION_NUMBER 0.1.0)
 
 # while debugging, disable the hosted node instance to use your own. node will always be hosted in production.
-# set(DISABLE_HOSTED_NODE 1)
+set(DISABLE_HOSTED_NODE 1)
 
 # ----------------------------------------
 
 # PROJECT INIT
 project(${PROJECT_NAME} VERSION ${VERSION_NUMBER})
 
-if(APPLE)
+if(APPLE AND NOT DEFINED CMAKE_OSX_ARCHITECTURES)
   execute_process(
     COMMAND uname -m
     OUTPUT_VARIABLE CMAKE_OSX_ARCHITECTURES
