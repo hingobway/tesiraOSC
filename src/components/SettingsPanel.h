@@ -15,6 +15,7 @@ class SettingsPanel : public juce::Component
 public:
   SettingsPanel(MainComponent *parent_) : parent(parent_)
   {
+    button.setButtonText("CONNECT");
 
     button.onClick = [this]()
     {
@@ -30,7 +31,7 @@ public:
     addAndMakeVisible(button);
   }
 
-   void paint(juce::Graphics &) override
+  void paint(juce::Graphics &) override
   {
   }
 
@@ -61,7 +62,7 @@ private:
   SettingsOSC osc;
   Button button;
 
-  std::shared_ptr<MainComponent> parent;
+  MainComponent *parent;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SettingsPanel)
 };

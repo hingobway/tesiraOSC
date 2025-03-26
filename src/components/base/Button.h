@@ -16,7 +16,7 @@ public:
     setColour(juce::TextButton::ColourIds::textColourOffId, tw::ZINC_100);
     setColour(juce::TextButton::ColourIds::buttonColourId, tw::ZINC_800);
     setColour(juce::TextButton::ColourIds::buttonOnColourId, tw::SKY_600);
-    setColour(juce::ComboBox::outlineColourId, juce::Colour().withAlpha(0.0f));
+    setColour(juce::ComboBox::outlineColourId, tw::ZINC_100.withAlpha(0.2f));
   }
   ~Button()
   {

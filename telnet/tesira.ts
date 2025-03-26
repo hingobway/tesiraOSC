@@ -40,7 +40,9 @@ export class TesiraNet extends EventEmitter<TesiraEventMap> {
     }
 
     await this.telnet.send(msg);
-    /*  const resp =  */ await this.telnet.nextData();
+    await this.telnet.nextData();
+
+    /*  const resp =  */
     // console.log('RESPONSE RESPONSE: ', resp);
     // await this.waitForResponse('+OK');
   }

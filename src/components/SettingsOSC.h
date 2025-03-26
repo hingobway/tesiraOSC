@@ -43,7 +43,7 @@ public:
   {
     juce::Rectangle<float> b;
     b.setWidth(float(PORT_WIDTH + PAD * 2));
-    b.setHeight(title.minBounds().getHeight() + float(GAP) + port.minBounds().getHeight());
+    b.setHeight(title.minBounds().getHeight() + float(GAP + PAD * 2) + port.minBounds().getHeight());
 
     return b;
   }

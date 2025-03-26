@@ -7,8 +7,9 @@ NetProcess::NetProcess() : juce::Thread("NetProcess")
 
 NetProcess::~NetProcess()
 {
+  if (process)
+    process->kill();
   stopThread(100);
-  process->kill();
 }
 
 void NetProcess::run()

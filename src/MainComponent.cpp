@@ -1,6 +1,6 @@
 #include "MainComponent.h"
 #include "Routing.h"
-#include "components/Settings.h"
+#include "components/SettingsPanel.h"
 
 #include "util/colors.h"
 #include "util/fonts.h"
