@@ -133,7 +133,7 @@ export class TesiraWrapper extends EventEmitter<TesiraEventMap> {
     this.tesira = new TesiraNet({
       host: this.config.remoteAddress,
       localAddress: this.config.localAddress,
-      port: 23,
+      port: this.config.port,
       negotiationMandatory: false,
       timeout: 5000,
     });
@@ -163,4 +163,5 @@ export class TesiraWrapper extends EventEmitter<TesiraEventMap> {
 export type TesiranetConfig = {
   remoteAddress: string;
   localAddress: string;
+  port: number;
 };

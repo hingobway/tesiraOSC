@@ -8,6 +8,7 @@ export const CMD_RECEIVE = {
   tesira_connect: z.object({
     remoteAddress: z.string(),
     localAddress: z.string(),
+    port: z.number(),
   } satisfies Record<keyof TesiranetConfig, ZodType>),
 
   /** RUN a tesira command. */

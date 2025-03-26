@@ -6,13 +6,13 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
-#define PARAMS_FILENAME ("params.dat")
+#define PARAMS_FILENAME ("params.bin")
 
 // PARAMS OBJECT
 
 struct Params
 {
-  // ** always update the serialize function when this changes! **
+  // ** always update the serialize function when changing this struct! **
 
   struct Tesira
   {
@@ -29,7 +29,7 @@ struct Params
 
 // --------------------------------------
 
-class ParamsFile
+class ParamsFile : private juce::Thread
 {
   struct SerialParams
   {
@@ -47,7 +47,7 @@ class ParamsFile
   };
 
 public:
-  ParamsFile() : params()
+  ParamsFile() : juce::Thread("ParamsFile"), params()
   {
     // get file path
     auto dir = juce::File::getSpecialLocation(juce::File::SpecialLocationType::userApplicationDataDirectory);
@@ -60,6 +60,10 @@ public:
 
     // initial file load
     loadFile();
+  }
+  ~ParamsFile() override
+  {
+    stopThread(100);
   }
 
   // manipulation
@@ -83,6 +87,15 @@ private:
 
   void saveFile()
   {
+    if (!isThreadRunning())
+      startThread();
+    juce::Thread::launch([this]() { //
+      waitForThreadToExit(1000);
+      startThread();
+    });
+  }
+  void run() override
+  { // SAVE FILE
     try
     {
       SerialParams sp{};
@@ -94,7 +107,9 @@ private:
     }
     catch (const std::exception &e)
     {
-      DBG("ERROR SAVING FILE " << e.what());
+      juce::MessageManager::callAsync([e]() { //
+        DBG("ERROR SAVING FILE " << e.what());
+      });
     }
   }
 

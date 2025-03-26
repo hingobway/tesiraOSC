@@ -9,16 +9,52 @@
 
 class SettingsTesira : public Panel
 {
-  const int PORT_WIDTH = 64;
+  const int PORT_WIDTH = 72;
 
 public:
   SettingsTesira(ParamsFile &p_) : params(p_)
   {
+    // config
     title.setText("TESIRA");
-    remoteAddress.setLabelText("remote address");
     port.setLabelText("port");
+    port.getTextbox().setInputRestrictions(6, "0123456789");
+    remoteAddress.setLabelText("remote address");
+    remoteAddress.setPlaceholder("192.168.0.XX");
     localAddress.setLabelText("bind to local address");
+    localAddress.setPlaceholder("192.168.0.XX");
 
+    // BINDS
+
+    // bind port
+    auto portNum = params.get().tesira.port;
+    port.getTextbox().setText(portNum > 0 ? juce::String(portNum) : "");
+    port.getTextbox().onTextChange = [this]()
+    {
+      params.set([this](Params &p) { //
+        auto newPort = port.getTextbox().getText().getIntValue();
+        p.tesira.port = newPort > 0 ? newPort : 0;
+      });
+    };
+
+    // bind remote address
+    remoteAddress.getTextbox().setText(params.get().tesira.remoteAddress);
+    remoteAddress.getTextbox().onTextChange = [this]()
+    {
+      params.set([this](Params &p) { //
+        p.tesira.remoteAddress = remoteAddress.getTextbox().getText().toStdString();
+      });
+    };
+
+    // bind local address
+    localAddress.getTextbox().setText(params.get().tesira.localAddress);
+    localAddress.getTextbox().onTextChange = [this]()
+    {
+      params.set([this](Params &p) { //
+        p.tesira.localAddress = localAddress.getTextbox().getText().toStdString();
+      });
+    };
+
+    // stacking order
     addAndMakeVisible(remoteAddress);
     addAndMakeVisible(port);
     addAndMakeVisible(localAddress);

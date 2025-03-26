@@ -56,12 +56,13 @@ public:
     ipc.sendCommand("tesira_run", juce::var(cmd));
   }
 
-  void tesira_connect(juce::String remoteAddress, juce::String localAddress)
+  void tesira_connect(juce::String remoteAddress, juce::String localAddress, int port)
   {
     JSON_OBJ(cmd)
     {
       cmd->setProperty("remoteAddress", remoteAddress);
       cmd->setProperty("localAddress", localAddress);
+      cmd->setProperty("port", port);
     }
     ipc.sendCommand("tesira_connect", juce::var(cmd));
   }

@@ -9,7 +9,7 @@
 
 class SettingsOSC : public Panel
 {
-  const int PORT_WIDTH = 64;
+  const int PORT_WIDTH = 72;
 
 public:
   SettingsOSC(ParamsFile &p_) : params(p_)

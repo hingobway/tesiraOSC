@@ -22,15 +22,9 @@ public:
 
     button.onClick = [this]()
     {
-      parent->routing->tesira_connect("169.254.3.243", "169.254.3.240");
-      for (auto ip : juce::IPAddress::getAllAddresses())
-      {
-        DBG("ADDRESS: " << ip.toString());
-      }
+      auto &ips = parent->params.get().tesira;
+      parent->routing->tesira_connect(ips.remoteAddress, ips.localAddress, ips.port);
     };
-
-    // parent->params.setParams([](Params &p){
-    // });
 
     addAndMakeVisible(tesira);
     addAndMakeVisible(osc);
@@ -58,7 +52,7 @@ public:
         fb2.items.add(juce::FlexItem(button).withFlex(1));
       }
       fb.items.add(juce::FlexItem(fb2)
-                       .withWidth(osc.minBounds().getHeight()));
+                       .withWidth(osc.minBounds().getWidth()));
     }
     fb.performLayout(getLocalBounds());
   }
