@@ -15,7 +15,7 @@ MainComponent::MainComponent()
 
   settingsPanel.reset(new SettingsPanel(*this));
 
-  setSize(504, 255);
+  setSize(504, 263);
 
   setLookAndFeel(&globalLAF);
 

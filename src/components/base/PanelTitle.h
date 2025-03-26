@@ -7,7 +7,7 @@
 
 class PanelTitle : public juce::Component
 {
-  const int GAP = 4;
+  const int GAP = 8;
 
   const int FONT_SIZE = 20;
   const juce::FontOptions FONT = fonts::Atkinson400();
