@@ -7,7 +7,7 @@
 class Routing : private RoutingWrapper
 {
 public:
-  Routing(MainComponent *ui_)
+  Routing(MainComponent &ui_)
       : RoutingWrapper(
             ui_,
             // REGISTER ROUTES
@@ -21,10 +21,10 @@ public:
 
     // osc
     osc.onListening = [this]() { //
-      ui->netStatus.updateStatus(NetStatus::OSC, NetStatus::CONNECTED);
+      ui.netStatus.updateStatus(NetStatus::OSC, NetStatus::CONNECTED);
     };
     osc.onListenFailed = [this]() { //
-      ui->netStatus.updateStatus(NetStatus::OSC, NetStatus::DISCONNECTED);
+      ui.netStatus.updateStatus(NetStatus::OSC, NetStatus::DISCONNECTED);
     };
     osc.onRunCommand = [this](std::string msg) { //
       tesira_run(juce::String(msg));
@@ -35,13 +35,13 @@ public:
       handleMessage(msg);
     };
     ipc.onConnect = [this]() { //
-      ui->netStatus.updateStatus(NetStatus::IPC, NetStatus::CONNECTED);
+      ui.netStatus.updateStatus(NetStatus::IPC, NetStatus::CONNECTED);
 
       // TODO request a tesira connect here (need to fetch ip address)
     };
     ipc.onDisconnect = [this]() { //
-      ui->netStatus.updateStatus(NetStatus::IPC, NetStatus::DISCONNECTED);
-      ui->netStatus.updateStatus(NetStatus::TESIRA, NetStatus::DISCONNECTED);
+      ui.netStatus.updateStatus(NetStatus::IPC, NetStatus::DISCONNECTED);
+      ui.netStatus.updateStatus(NetStatus::TESIRA, NetStatus::DISCONNECTED);
     };
   }
 
@@ -76,7 +76,7 @@ private:
     if (!c.isBool())
       return;
 
-    ui->netStatus.updateStatus(
+    ui.netStatus.updateStatus(
         NetStatus::TESIRA,
         (!!c) ? NetStatus::CONNECTED : NetStatus::DISCONNECTED);
   }

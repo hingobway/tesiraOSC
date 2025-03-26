@@ -14,12 +14,12 @@ class RoutingWrapper
   using RouteMap = std::unordered_map<std::string, std::function<void(juce::var)>>;
 
 public:
-  RoutingWrapper(MainComponent *, RouteMap routes);
+  RoutingWrapper(MainComponent &, RouteMap routes);
 
 protected:
   void handleMessage(juce::String msg);
 
-  MainComponent *ui;
+  MainComponent &ui;
   NetProcess netProcess;
   IPC ipc;
   OSCWatch osc;

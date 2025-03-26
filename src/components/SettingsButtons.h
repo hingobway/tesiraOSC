@@ -2,6 +2,7 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
+#include "../Params.h"
 #include "../util/colors.h"
 
 #include "base/IconButton.h"
@@ -11,20 +12,26 @@ class SettingsButtons : public juce::Component
   const int GAP = 12;
 
 public:
-  SettingsButtons()
-      : restart(IconButton::Icons::Restart, "Restart"),
+  SettingsButtons(ParamsFile &p_)
+      : params(p_),
+        restart(IconButton::Icons::Restart, "Restart"),
         lockUnlock(IconButton::Icons::LockUnlock, "LockUnlock")
   {
     // config
     lockUnlock.setClickingTogglesState(true);
 
     // HANDLERS
+    lockUnlock.onClick = [this]()
+    {
+      params.set([this](Params &p)
+                 { p.isLocked = !lockUnlock.getToggleState(); });
 
-    // button.onClick = [this]()
-    // {
-    //   auto &ips = parent->params.get().tesira;
-    //   parent->routing->tesira_connect(ips.remoteAddress, ips.localAddress, ips.port);
-    // };
+      // auto &ips = params.get().tesira;
+      // parent->routing->tesira_connect(ips.remoteAddress, ips.localAddress, ips.port);
+    };
+
+    // bind lock unlock
+    lockUnlock.setToggleState(!params.get().isLocked, juce::sendNotification);
 
     // stacking order
     addAndMakeVisible(restart);
@@ -46,6 +53,8 @@ public:
   }
 
 private:
+  ParamsFile &params;
+
   IconButton restart;
   IconButton lockUnlock;
 

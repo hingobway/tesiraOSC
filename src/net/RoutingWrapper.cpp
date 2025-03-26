@@ -1,6 +1,6 @@
 #include "RoutingWrapper.h"
 
-RoutingWrapper::RoutingWrapper(MainComponent *ui_, RouteMap routes_)
+RoutingWrapper::RoutingWrapper(MainComponent &ui_, RouteMap routes_)
     : ui{ui_}, routes{routes_}
 {
 }

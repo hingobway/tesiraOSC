@@ -11,9 +11,9 @@ MainComponent::MainComponent()
     : inspector(*this, false)
 #endif
 {
-  routing.reset(new Routing(this));
+  routing.reset(new Routing(*this));
 
-  settingsPanel.reset(new SettingsPanel(this));
+  settingsPanel.reset(new SettingsPanel(*this));
 
   setSize(504, 255);
 

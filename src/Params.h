@@ -26,14 +26,8 @@ struct Params
     int port = 57820;
   } osc;
 
-  // -------------------
-
-  // state params are not persistent
-  struct State
-  {
-    /** is panel locked */
-    bool isLocked;
-  } state;
+  /** is panel locked */
+  bool isLocked = false;
 };
 
 // --------------------------------------
@@ -52,6 +46,7 @@ class ParamsFile : private juce::Thread
       ar & params.tesira.localAddress;
       ar & params.tesira.port;
       ar & params.osc.port;
+      ar & params.isLocked;
     }
   };
 

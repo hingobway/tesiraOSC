@@ -14,9 +14,9 @@ class SettingsPanel : public juce::Component
   const int GAP = 16;
 
 public:
-  SettingsPanel(MainComponent *parent_)
-      : parent(parent_),
-        tesira(parent->params), osc(parent->params)
+  SettingsPanel(MainComponent &parent_)
+      : parent{parent_},
+        tesira(parent.params), osc(parent.params), buttons(parent.params)
   {
 
     addAndMakeVisible(tesira);
@@ -51,7 +51,7 @@ public:
   }
 
 private:
-  MainComponent *parent;
+  MainComponent &parent;
 
   SettingsTesira tesira;
   SettingsOSC osc;

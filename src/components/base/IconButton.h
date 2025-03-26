@@ -31,7 +31,7 @@ public:
 
     useVariant(type);
   }
-  ~IconButton()
+  ~IconButton() override
   {
     setLookAndFeel(nullptr);
   }
@@ -57,10 +57,18 @@ public:
     return *this;
   }
 
+  std::function<void()> onClickSync;
+
 private:
   Icons type;
   std::unique_ptr<juce::Drawable> svg;
   std::unique_ptr<juce::Drawable> svgOn;
+
+  void clicked() override
+  {
+    if (onClickSync)
+      onClickSync();
+  }
 
   class LAF : public juce::LookAndFeel_V4
   {
