@@ -15,7 +15,7 @@ MainComponent::MainComponent()
 
   settingsPanel.reset(new SettingsPanel(this));
 
-  setSize(518, 275);
+  setSize(504, 255);
 
   setLookAndFeel(&globalLAF);
 
@@ -37,7 +37,8 @@ void MainComponent::paint(juce::Graphics &g)
 
 void MainComponent::resized()
 {
-  const int GAP = 24;
+  const int PAD = 16;
+  const int GAP = 22;
 
   juce::FlexBox fb{};
   fb.flexDirection = juce::FlexBox::Direction::column;
@@ -46,5 +47,5 @@ void MainComponent::resized()
     fb.items.add(juce::FlexItem().withHeight(GAP));
     fb.items.add(juce::FlexItem(netStatus).withHeight(netStatus.minBounds().getHeight()));
   }
-  fb.performLayout(getLocalBounds().reduced(GAP));
+  fb.performLayout(getLocalBounds().reduced(PAD));
 }

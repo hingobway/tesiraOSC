@@ -7,28 +7,21 @@
 
 #include "SettingsTesira.h"
 #include "SettingsOSC.h"
-#include "base/Button.h"
+#include "SettingsButtons.h"
 
 class SettingsPanel : public juce::Component
 {
-  const int GAP = 24;
+  const int GAP = 16;
 
 public:
   SettingsPanel(MainComponent *parent_)
       : parent(parent_),
         tesira(parent->params), osc(parent->params)
   {
-    button.setButtonText("CONNECT");
-
-    button.onClick = [this]()
-    {
-      auto &ips = parent->params.get().tesira;
-      parent->routing->tesira_connect(ips.remoteAddress, ips.localAddress, ips.port);
-    };
 
     addAndMakeVisible(tesira);
     addAndMakeVisible(osc);
-    addAndMakeVisible(button);
+    addAndMakeVisible(buttons);
   }
 
   void paint(juce::Graphics &) override
@@ -49,7 +42,7 @@ public:
         fb2.items.add(juce::FlexItem(osc)
                           .withHeight(osc.minBounds().getHeight()));
         fb2.items.add(juce::FlexItem().withHeight(GAP));
-        fb2.items.add(juce::FlexItem(button).withFlex(1));
+        fb2.items.add(juce::FlexItem(buttons).withFlex(1));
       }
       fb.items.add(juce::FlexItem(fb2)
                        .withWidth(osc.minBounds().getWidth()));
@@ -62,7 +55,7 @@ private:
 
   SettingsTesira tesira;
   SettingsOSC osc;
-  Button button;
+  SettingsButtons buttons;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SettingsPanel)
 };

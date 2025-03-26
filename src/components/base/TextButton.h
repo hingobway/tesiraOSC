@@ -4,11 +4,11 @@
 
 #include "../../util/colors.h"
 
-class Button : public juce::TextButton
+class TextButton : public juce::TextButton
 {
 
 public:
-  Button()
+  TextButton()
   {
     setLookAndFeel(&laf);
 
@@ -18,7 +18,7 @@ public:
     setColour(juce::TextButton::ColourIds::buttonOnColourId, tw::SKY_600);
     setColour(juce::ComboBox::outlineColourId, tw::ZINC_100.withAlpha(0.2f));
   }
-  ~Button()
+  ~TextButton()
   {
     setLookAndFeel(nullptr);
   }
@@ -36,7 +36,7 @@ private:
     {
 
       auto bounds = button.getLocalBounds().toFloat();
-      auto cornerSize = bounds.getHeight() / 2.0f;
+      auto cornerSize = 8.0f;
 
       auto baseColour =
           backgroundColour
@@ -56,5 +56,5 @@ private:
 
   LAF laf;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Button)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TextButton)
 };

@@ -25,6 +25,15 @@ struct Params
   {
     int port = 57820;
   } osc;
+
+  // -------------------
+
+  // state params are not persistent
+  struct State
+  {
+    /** is panel locked */
+    bool isLocked;
+  } state;
 };
 
 // --------------------------------------
