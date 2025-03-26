@@ -12,6 +12,7 @@ MainComponent::MainComponent()
 #endif
 {
   routing.reset(new Routing(this));
+
   settingsPanel.reset(new SettingsPanel(this));
 
   setSize(518, 275);

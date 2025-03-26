@@ -11,12 +11,14 @@ class TextboxWithLabel : public juce::Component
 {
   const int GAP = 2;
   const int TEXTBOX_HEIGHT = 30;
+  const juce::Colour COLOR_TEXT_PLACEHOLDER = tw::ZINC_500;
 
 public:
   TextboxWithLabel()
   {
-    textbox.setTextToShowWhenEmpty("placeholder", tw::ZINC_400);
+    textbox.setTextToShowWhenEmpty("placeholder", COLOR_TEXT_PLACEHOLDER);
     label.setText("label", juce::dontSendNotification);
+    textbox.setIndents(8, 0);
 
     addAndMakeVisible(label);
     addAndMakeVisible(textbox);
@@ -43,6 +45,14 @@ public:
     label.setText(text, juce::dontSendNotification);
     return *this;
   }
+
+  TextboxWithLabel &setPlaceholder(juce::String text)
+  {
+    textbox.setTextToShowWhenEmpty(text, COLOR_TEXT_PLACEHOLDER);
+    return *this;
+  }
+
+  Textbox &getTextbox() { return textbox; }
 
   juce::Rectangle<float> minBounds()
   {

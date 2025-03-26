@@ -2,16 +2,17 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
+#include "../Params.h"
 #include "../util/colors.h"
 #include "base/Panel.h"
 #include "base/TextboxWithLabel.h"
 
 class SettingsTesira : public Panel
 {
-  const int PORT_WIDTH = 90;
+  const int PORT_WIDTH = 64;
 
 public:
-  SettingsTesira()
+  SettingsTesira(ParamsFile &p_) : params(p_)
   {
     title.setText("TESIRA");
     remoteAddress.setLabelText("remote address");
@@ -66,6 +67,8 @@ private:
   TextboxWithLabel remoteAddress;
   TextboxWithLabel port;
   TextboxWithLabel localAddress;
+
+  ParamsFile &params;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SettingsTesira)
 };

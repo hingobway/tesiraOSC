@@ -3,6 +3,7 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "../util/colors.h"
 #include "../MainComponent.h"
+#include "../Params.h"
 
 #include "SettingsTesira.h"
 #include "SettingsOSC.h"
@@ -13,7 +14,9 @@ class SettingsPanel : public juce::Component
   const int GAP = 24;
 
 public:
-  SettingsPanel(MainComponent *parent_) : parent(parent_)
+  SettingsPanel(MainComponent *parent_)
+      : parent(parent_),
+        tesira(parent->params), osc(parent->params)
   {
     button.setButtonText("CONNECT");
 
@@ -25,6 +28,9 @@ public:
         DBG("ADDRESS: " << ip.toString());
       }
     };
+
+    // parent->params.setParams([](Params &p){
+    // });
 
     addAndMakeVisible(tesira);
     addAndMakeVisible(osc);
@@ -58,11 +64,11 @@ public:
   }
 
 private:
+  MainComponent *parent;
+
   SettingsTesira tesira;
   SettingsOSC osc;
   Button button;
-
-  MainComponent *parent;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SettingsPanel)
 };

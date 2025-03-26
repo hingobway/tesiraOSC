@@ -3,8 +3,8 @@
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <melatonin_inspector/melatonin_inspector.h>
 
+#include "Params.h"
 #include "gui/GlobalLAF.h"
-
 #include "components/NetStatus.h"
 
 class Routing;       // forward declaration (see .cpp)
@@ -21,12 +21,13 @@ public:
   void paint(juce::Graphics &) override;
   void resized() override;
 
+  // BACKEND
+  ParamsFile params;
+  std::unique_ptr<Routing> routing;
+
   // CHILD COMPONENTS
   NetStatus netStatus;
   std::unique_ptr<SettingsPanel> settingsPanel;
-
-  // BACKEND
-  std::unique_ptr<Routing> routing;
 
 private:
   //==============================================================================

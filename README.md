@@ -4,3 +4,4 @@
 
 - [cmake](https://cmake.org/)
 - [deno](https://docs.deno.com/runtime/getting_started/installation/)
+- [boost](https://boost.org)

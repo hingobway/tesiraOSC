@@ -29,6 +29,7 @@ endif()
 add_subdirectory(include/JUCE JUCE)
 add_subdirectory(include/melatonin_inspector)
 
+find_package(Boost CONFIG REQUIRED COMPONENTS serialization)
 include(include/oscpack.cmake)
 include(include/websocketpp.cmake)
 
@@ -99,6 +100,9 @@ target_link_libraries(${TARGET_NAME}
   # EXTERNAL DEPS
   oscpack
   websocketpp
+
+  Boost::boost
+  Boost::serialization
 
   # JUCE MODULES
   juce::juce_gui_basics
