@@ -40,6 +40,8 @@ juce_add_gui_app(${TARGET_NAME}
   # manufacturer
   COMPANY_NAME "foster"
   BUNDLE_ID "audio.foster.tesiraOSC"
+
+  ICON_BIG "assets/icon.png"
 )
 
 # NODE DIR SETUP
