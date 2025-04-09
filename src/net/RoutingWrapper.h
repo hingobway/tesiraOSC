@@ -7,6 +7,7 @@
 #include "IPC.h"
 #include "OSCWatch.h"
 #include "NetProcess.h"
+#include "../Params.h"
 
 class RoutingWrapper
 {

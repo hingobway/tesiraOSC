@@ -11,6 +11,11 @@ class IconButton : public juce::DrawableButton
   static constexpr int BORDER_RADIUS = 12;
 
 public:
+  enum ColourIds
+  {
+    outlineHighlightColourId
+  };
+
   enum Icons
   {
     LockUnlock,
@@ -26,6 +31,7 @@ public:
 
     setColour(juce::DrawableButton::backgroundOnColourId, tw::ZINC_800);
     setColour(juce::DrawableButton::backgroundColourId, tw::ZINC_800);
+    setColour(ColourIds::outlineHighlightColourId, tw::ZINC_700);
 
     setMouseCursor(juce::MouseCursor::PointingHandCursor);
 
@@ -90,6 +96,13 @@ private:
       // draw background
       g.setColour(button.findColour(isOn ? juce::DrawableButton::backgroundOnColourId : juce::DrawableButton::backgroundColourId));
       g.fillRoundedRectangle(bounds.toFloat(), (float)BORDER_RADIUS);
+
+      // draw focus outline
+      if (shouldDrawButtonAsHighlighted || shouldDrawButtonAsDown)
+      {
+        g.setColour(juce::Colours::white.withAlpha(0.1f));
+        g.drawRoundedRectangle(bounds.reduced(1).toFloat(), (float)(BORDER_RADIUS - 1), 1.0f);
+      }
 
       // draw icon
 

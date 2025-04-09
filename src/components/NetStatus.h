@@ -64,6 +64,11 @@ public:
     repaint();
   }
 
+  Status getStatus(StatusType type)
+  {
+    return status[type].getStatus();
+  }
+
 private:
   class NetStatusSingle
   {
@@ -99,6 +104,8 @@ private:
       b.setBounds(0, 0, w, h);
       return b;
     }
+
+    Status getStatus() { return status; }
 
   private:
     juce::AttributedString renderName()

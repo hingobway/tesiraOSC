@@ -10,8 +10,31 @@
 
 OSCWatch::OSCWatch() : juce::Thread("OSCWatch")
 {
+}
 
-  bool success = udp.bindToPort(PORT_OSC);
+OSCWatch::OSCWatch(int port_) : juce::Thread("OSCWatch")
+{
+  listenOnPort(port_);
+}
+
+OSCWatch::~OSCWatch()
+{
+  bool cleanExit = stopThread(THREAD_KILL_TIMEOUT_MS);
+  if (!cleanExit)
+    DBG("[OSC] WARNING: OSC was killed prematurely.");
+}
+
+void OSCWatch::listenOnPort(int port_)
+{
+  port = port_;
+  if (isThreadRunning())
+    stopThread(THREAD_KILL_TIMEOUT_MS);
+  if (onListenFailed)
+    onListenFailed();
+
+  udp.reset(new juce::DatagramSocket());
+
+  bool success = udp->bindToPort(port);
   if (!success)
   {
     DBG("[OSC] PORT BIND FAILED");
@@ -23,17 +46,10 @@ OSCWatch::OSCWatch() : juce::Thread("OSCWatch")
   startThread();
 }
 
-OSCWatch::~OSCWatch()
-{
-  bool cleanExit = stopThread(THREAD_KILL_TIMEOUT_MS);
-  if (!cleanExit)
-    DBG("[OSC] WARNING: OSC was killed prematurely.");
-}
-
 void OSCWatch::run()
 {
   juce::MessageManager::callAsync([this]() { //
-    DBG("[OSC] LISTENING on port " << PORT_OSC);
+    DBG("[OSC] LISTENING");
     if (onListening)
       onListening();
   });
@@ -41,14 +57,16 @@ void OSCWatch::run()
   while (!threadShouldExit())
   {
     // wait for input
-    int ready = udp.waitUntilReady(true, READ_WAIT_MS);
+    int ready = udp->waitUntilReady(true, READ_WAIT_MS);
     if (ready == -1)
       DBG("[OSC] UDP ERROR");
     if (ready != 1)
       continue;
+    if (threadShouldExit())
+      return;
 
     // read message
-    int bytesRead = udp.read(readBuffer, OSC_BUFFER_SIZE, false);
+    int bytesRead = udp->read(readBuffer, OSC_BUFFER_SIZE, false);
     if (!bytesRead)
       continue;
 
@@ -64,7 +82,16 @@ void OSCWatch::run()
 
         auto command = std::string(msg.AddressPattern());
 
-        // CHECK COMMAND
+        // IDLE COMMAND
+        if (command == "/ping")
+        {
+          juce::MessageManager::callAsync([this]() { //
+            if (onRunCommand)
+              onRunCommand("DEVICE get hostname");
+          });
+        }
+
+        // RUN COMMAND
         if (command != OSC_COMMAND)
           continue;
 

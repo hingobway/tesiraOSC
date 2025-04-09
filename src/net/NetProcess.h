@@ -12,10 +12,10 @@ public:
   NetProcess();
   ~NetProcess();
 
-  void run();
+  void runProcess();
 
 private:
-  void runProcess();
+  void run();
   void restartProcess();
 
   std::unique_ptr<juce::ChildProcess> process;

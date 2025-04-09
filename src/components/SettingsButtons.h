@@ -4,6 +4,7 @@
 
 #include "../Params.h"
 #include "../util/colors.h"
+#include "../Routing.h"
 
 #include "base/IconButton.h"
 
@@ -12,8 +13,9 @@ class SettingsButtons : public juce::Component
   const int GAP = 12;
 
 public:
-  SettingsButtons(ParamsFile &p_)
-      : params(p_),
+  SettingsButtons(ParamsFile &p_, Routing &r_)
+      : params(p_), routing(r_),
+
         restart(IconButton::Icons::Restart, "Restart"),
         lockUnlock(IconButton::Icons::LockUnlock, "LockUnlock")
   {
@@ -23,18 +25,20 @@ public:
     // HANDLERS
     lockUnlock.onClick = [this]()
     {
-      params.set([this](Params &p)
-                 { p.isLocked = !lockUnlock.getToggleState(); });
+      auto isLocked = !lockUnlock.getToggleState();
+      // update params file
+      params.set([isLocked](Params &p)
+                 { p.isLocked = isLocked; });
 
-      // auto &ips = params.get().tesira;
-      // parent->routing->tesira_connect(ips.remoteAddress, ips.localAddress, ips.port);
+      //  run lock commands
+      routing.system_lock(isLocked);
     };
 
     // bind lock unlock
     lockUnlock.setToggleState(!params.get().isLocked, juce::sendNotification);
 
     // stacking order
-    addAndMakeVisible(restart);
+    // addAndMakeVisible(restart);
     addAndMakeVisible(lockUnlock);
   }
 
@@ -45,8 +49,8 @@ public:
     juce::FlexBox fb;
     fb.flexDirection = juce::FlexBox::Direction::row;
     {
-      fb.items.add(juce::FlexItem(restart).withFlex(1));
-      fb.items.add(juce::FlexItem().withWidth(GAP));
+      // fb.items.add(juce::FlexItem(restart).withFlex(1));
+      // fb.items.add(juce::FlexItem().withWidth(GAP));
       fb.items.add(juce::FlexItem(lockUnlock).withFlex(1));
     }
     fb.performLayout(getLocalBounds());
@@ -54,6 +58,7 @@ public:
 
 private:
   ParamsFile &params;
+  Routing &routing;
 
   IconButton restart;
   IconButton lockUnlock;

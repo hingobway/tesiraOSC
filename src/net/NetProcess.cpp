@@ -1,8 +1,7 @@
 #include "NetProcess.h"
 
 NetProcess::NetProcess() : juce::Thread("NetProcess")
-{
-  runProcess();
+{  
 }
 
 NetProcess::~NetProcess()
@@ -69,6 +68,9 @@ void NetProcess::runProcess()
   if (NO_NODE_HOST) // allow for separate node in development
     return;
 
+  if (isThreadRunning())
+    stopThread(100);
+
   std::string filename{NODE_APP};
   // univeral binary needs intel node file
 #if defined(__APPLE__) && !defined(__aarch64__)
@@ -92,6 +94,5 @@ void NetProcess::runProcess()
 void NetProcess::restartProcess() // MAIN THREAD ONLY
 {
   DBG("[NET] RESTARTING NODE PROCESS");
-  stopThread(100);
   runProcess();
 }

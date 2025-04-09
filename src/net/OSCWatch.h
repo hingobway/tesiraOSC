@@ -14,7 +14,12 @@ class OSCWatch : private juce::Thread
 {
 public:
   OSCWatch();
+  OSCWatch(int port);
   ~OSCWatch() override;
+
+  void listenOnPort(int port);
+  void listenOnPort() { listenOnPort(port); }
+  int getPort() { return port; }
 
   // EVENT CALLBACKS
   std::function<void(std::string cmd)> onRunCommand;
@@ -22,9 +27,11 @@ public:
   std::function<void()> onListenFailed;
 
 private:
+  int port;
+
   void run() override;
 
-  juce::DatagramSocket udp;
+  std::unique_ptr<juce::DatagramSocket> udp;
   char readBuffer[OSC_BUFFER_SIZE];
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OSCWatch)

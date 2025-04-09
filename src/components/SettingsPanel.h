@@ -16,9 +16,8 @@ class SettingsPanel : public juce::Component
 public:
   SettingsPanel(MainComponent &parent_)
       : parent{parent_},
-        tesira(parent.params), osc(parent.params), buttons(parent.params)
+        tesira(parent.params), osc(parent.params), buttons(parent.params, *parent.routing)
   {
-
     addAndMakeVisible(tesira);
     addAndMakeVisible(osc);
     addAndMakeVisible(buttons);
