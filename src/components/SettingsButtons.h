@@ -33,12 +33,16 @@ public:
       //  run lock commands
       routing.system_lock(isLocked);
     };
+    restart.onClick = [this]()
+    {
+      routing.system_lock(true, true);
+    };
 
     // bind lock unlock
     lockUnlock.setToggleState(!params.get().isLocked, juce::sendNotification);
 
     // stacking order
-    // addAndMakeVisible(restart);
+    addAndMakeVisible(restart);
     addAndMakeVisible(lockUnlock);
   }
 
@@ -49,8 +53,8 @@ public:
     juce::FlexBox fb;
     fb.flexDirection = juce::FlexBox::Direction::row;
     {
-      // fb.items.add(juce::FlexItem(restart).withFlex(1));
-      // fb.items.add(juce::FlexItem().withWidth(GAP));
+      fb.items.add(juce::FlexItem(restart).withFlex(1));
+      fb.items.add(juce::FlexItem().withWidth(GAP));
       fb.items.add(juce::FlexItem(lockUnlock).withFlex(1));
     }
     fb.performLayout(getLocalBounds());

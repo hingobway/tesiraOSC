@@ -21,7 +21,7 @@ IPC::~IPC()
   }
 
   // force stop
-  stopThread(100);
+  stopThread(300);
 }
 
 // PUBLIC

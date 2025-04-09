@@ -7,13 +7,15 @@
 #include "base/Panel.h"
 #include "base/TextboxWithLabel.h"
 
-class SettingsTesira : public Panel
+class SettingsTesira : public Panel, public ParamsFile::Listener
 {
   const int PORT_WIDTH = 72;
 
 public:
   SettingsTesira(ParamsFile &p_) : params(p_)
   {
+    params.listen(this);
+
     // config
     title.setText("TESIRA");
     port.setLabelText("port");
@@ -24,6 +26,9 @@ public:
     localAddress.setPlaceholder("192.168.0.XX");
 
     // BINDS
+
+    // initial lock
+    onLockChange(params.get().isLocked);
 
     // bind port
     auto portNum = params.get().tesira.port;
@@ -58,6 +63,10 @@ public:
     addAndMakeVisible(remoteAddress);
     addAndMakeVisible(port);
     addAndMakeVisible(localAddress);
+  }
+  ~SettingsTesira() override
+  {
+    params.unlisten(this);
   }
 
   void resized() override
@@ -97,6 +106,13 @@ public:
     }
 
     fb.performLayout(getLocalBounds().reduced(PAD));
+  }
+
+  void onLockChange(bool isLocked) override
+  {
+    remoteAddress.getTextbox().setEnabled(!isLocked);
+    localAddress.getTextbox().setEnabled(!isLocked);
+    port.getTextbox().setEnabled(!isLocked);
   }
 
 private:

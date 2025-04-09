@@ -76,7 +76,7 @@ public:
     ipc.sendCommand("tesira_connect", juce::var(cmd));
   }
 
-  void system_lock(bool isLocked)
+  void system_lock(bool isLocked, bool fullReset = false)
   {
     if (isLocked)
     {
@@ -87,7 +87,7 @@ public:
         osc.listenOnPort(p.osc.port);
 
       // START/RESTART NODE if needed
-      if (ui.netStatus.getStatus(NetStatus::TESIRA) == NetStatus::CONNECTED || ui.netStatus.getStatus(NetStatus::IPC) == NetStatus::DISCONNECTED)
+      if (fullReset || (ui.netStatus.getStatus(NetStatus::TESIRA) == NetStatus::CONNECTED || ui.netStatus.getStatus(NetStatus::IPC) == NetStatus::DISCONNECTED))
       {
         netProcess.runProcess();
       }

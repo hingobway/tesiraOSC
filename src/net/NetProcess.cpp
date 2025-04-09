@@ -1,14 +1,14 @@
 #include "NetProcess.h"
 
 NetProcess::NetProcess() : juce::Thread("NetProcess")
-{  
+{
 }
 
 NetProcess::~NetProcess()
 {
-  if (process)
+  if (process != nullptr)
     process->kill();
-  stopThread(100);
+  stopThread(200);
 }
 
 void NetProcess::run()

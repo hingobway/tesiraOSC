@@ -70,15 +70,38 @@ public:
     stopThread(100);
   }
 
+  // listeners init
+
+  class Listener
+  {
+  public:
+    virtual void onLockChange(bool isLocked) { juce::ignoreUnused(isLocked); }
+  };
+  void listen(Listener *listener)
+  {
+    listeners.add(listener);
+  }
+  void unlisten(Listener *listener)
+  {
+    listeners.remove(listener);
+  }
+
   // manipulation
 
   /** get params object */
-  const Params &get() { return params; }
+  const Params &get() const { return params; }
   /** update the parameters object */
   void set(std::function<void(Params &)> updater)
   {
+    auto old = params;
     updater(params);
     saveFile();
+
+    // trigger listeners
+    if (old.isLocked != params.isLocked)
+      listeners.call([this](Listener &l) { //
+        l.onLockChange(params.isLocked);
+      });
   }
 
 private:
@@ -86,6 +109,8 @@ private:
 
   Params params;
   std::string filepath;
+
+  juce::LightweightListenerList<Listener> listeners;
 
   // serialization functions
 

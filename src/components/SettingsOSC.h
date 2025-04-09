@@ -7,18 +7,23 @@
 #include "base/Panel.h"
 #include "base/TextboxWithLabel.h"
 
-class SettingsOSC : public Panel
+class SettingsOSC : public Panel, public ParamsFile::Listener
 {
   const int PORT_WIDTH = 72;
 
 public:
   SettingsOSC(ParamsFile &p_) : params(p_)
   {
+    params.listen(this);
+
     // config
     title.setText("OSC");
     port.setLabelText("port")
         .setPlaceholder("57820");
     port.getTextbox().setInputRestrictions(6, "0123456789");
+
+    // initial lock
+    onLockChange(params.get().isLocked);
 
     // bind port
     auto portNum = params.get().osc.port;
@@ -32,6 +37,10 @@ public:
     };
 
     addAndMakeVisible(port);
+  }
+  ~SettingsOSC() override
+  {
+    params.unlisten(this);
   }
 
   void resized() override
@@ -61,6 +70,11 @@ public:
     b.setHeight(title.minBounds().getHeight() + float(GAP + PAD * 2) + port.minBounds().getHeight());
 
     return b;
+  }
+
+  void onLockChange(bool isLocked) override
+  {
+    port.getTextbox().setEnabled(!isLocked);
   }
 
 private:

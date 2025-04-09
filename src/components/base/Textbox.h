@@ -25,7 +25,7 @@ public:
     setFont(fonts::Atkinson400().withHeight(FONT_SIZE));
 
     setJustification(juce::Justification::centredLeft);
-    }
+  }
   ~Textbox()
   {
     setLookAndFeel(nullptr);
@@ -54,6 +54,9 @@ private:
     void fillTextEditorBackground(juce::Graphics &g, int width, int height, juce::TextEditor &textEditor) override
     {
       g.setColour(textEditor.findColour(juce::TextEditor::backgroundColourId));
+
+      if (!textEditor.isEnabled())
+        g.setColour(juce::Colours::white.withAlpha(0.2f));
       g.fillRoundedRectangle(juce::Rectangle<int>(0, 0, width, height).toFloat(), BORDER_RADIUS);
     }
   };
