@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # VARIABLES
 set(PROJECT_NAME "TESIRA_OSC")
 set(TARGET_NAME "tesiraOSC")
-set(VERSION_NUMBER 1.0.0)
+set(VERSION_NUMBER 1.0.1)
 
 # while debugging, disable the hosted node instance to use your own. node will always be hosted in production.
 set(DISABLE_HOSTED_NODE 1)
