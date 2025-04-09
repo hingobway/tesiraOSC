@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: 'x86_64'
+          # - arch: 'x86_64'
           - arch: 'arm64'
     permissions:
       contents: write
@@ -32,6 +32,7 @@ jobs:
       # cmake build
       - name: dependencies
         run: |
+          brew install boost
           git submodule update --init
       - name: cmake build - ${{matrix.arch}}
         run: |
@@ -44,3 +45,20 @@ jobs:
         with:
           name: macOS_${{ matrix.arch }}
           path: ${{env.OUT_PATH}}/
+  upload:
+    needs: build
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: download
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2.1.0
+        with:
+          files: download/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
