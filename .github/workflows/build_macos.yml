@@ -48,4 +48,4 @@ jobs:
       - name: release binary
         uses: softprops/action-gh-release@v2.1.0
         with:
-          files: ${{env.OUT_PATH}}/*.dmg
+          files: ${{env.OUT_PATH}}/*
